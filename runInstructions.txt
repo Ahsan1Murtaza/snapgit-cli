@@ -10,3 +10,13 @@ To run the file
 
 Note:
 mygit.exe is optional Any name would work
+
+
+SSL Linking For sha1:
+    -lssl -lcrypto
+Use this after mygit.exe
+
+
+
+According to Latest Structure
+g++ .\main.cpp .\CommandHandlers\AddHandler\AddHandler.cpp .\CommandHandlers\InitHandler\InitHandler.cpp .\Helper\Hash\Hash.cpp .\Objects\Blob\Blob.cpp -o mygit.exe -lssl -lcrypto
