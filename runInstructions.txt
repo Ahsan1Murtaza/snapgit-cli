@@ -1,0 +1,12 @@
+To run the file
+
+1.  Include all necessary .cpp files
+
+    g++ main.cpp init.cpp -o mygit.exe
+
+2.  mygit.exe (command here)
+    mygit.exe init
+    mygit.exe help
+
+Note:
+mygit.exe is optional Any name would work
