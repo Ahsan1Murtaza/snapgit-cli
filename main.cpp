@@ -3,6 +3,7 @@
 
 #include "CommandHandlers/InitHandler/InitHandler.h"
 #include "CommandHandlers/AddHandler/AddHandler.h"
+#include "CommandHandlers/CommitHandler/CommitHandler.h"
 
 using namespace std;
     /* Function to print help information
@@ -20,6 +21,7 @@ int main(int argc, char* argv[]) {
 
     InitHandler initHandler; // Create an instance of InitHandler
     AddHandler addHandler; // Create an instance of AddHandler
+    CommitHandler commitHandler; // Create an instance of CommitHandler
 
     if (argc < 2) {
         printHelp();
@@ -43,6 +45,24 @@ int main(int argc, char* argv[]) {
         }
         string filePath = argv[2];
         addHandler.handleAdd(filePath);
+    }
+    else if (command == "commit") {
+        if (argc < 4) {
+            cout << "Error: 'commit -m' command requires a commit message argument.\n";
+            return 1;
+        }
+        string symbol = argv[2];
+        if (symbol != "-m") {
+            cout << "Error: Unknown symbol " << symbol << " for commit command.\n";
+            return 1;
+        }
+        string commitMessage = argv[3];
+        if (commitMessage.empty()) {
+            cout << "Error: Commit message cannot be empty.\n";
+            return 1;
+        }
+        commitHandler.handleCommit(commitMessage);
+        
     }
     else {
         cout << "Unknown command: " << command << "\n";

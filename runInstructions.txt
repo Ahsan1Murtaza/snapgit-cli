@@ -19,4 +19,4 @@ Use this after mygit.exe
 
 
 According to Latest Structure
-g++ .\main.cpp .\CommandHandlers\AddHandler\AddHandler.cpp .\CommandHandlers\InitHandler\InitHandler.cpp .\Helper\Hash\Hash.cpp .\Objects\Blob\Blob.cpp -o mygit.exe -lssl -lcrypto
+g++ .\main.cpp .\CommandHandlers\AddHandler\AddHandler.cpp .\CommandHandlers\InitHandler\InitHandler.cpp .\CommandHandlers\CommitHandler\CommitHandler.cpp .\Helper\Hash\Hash.cpp .\Objects\Blob\Blob.cpp .\Objects\Tree\Tree.cpp .\Helper\RepoCheck\RepoCheck.cpp .\Helper\SortIndex\SortIndex.cpp  -o mygit.exe -lssl -lcrypto
