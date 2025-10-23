@@ -26,5 +26,7 @@ void CommitHandler::handleCommit(const string &message)
     tree.buildFromIndex(".mygit/index");
     tree.showTreeElements();
 
+    tree.save();
+
     cout << "Committed with message: " << message << "\n";
 }
