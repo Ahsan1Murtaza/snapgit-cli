@@ -10,7 +10,8 @@ using namespace std;
 
 namespace fs = std::filesystem;
 
-Commit::Commit(const string& treeHash, const string& parentHash, const string& message, const string& author) : Object("commit"), treeHash(treeHash), parentHash(parentHash), message(message), author(author) {}
+
+Commit::Commit(const string& treeHash, const string& parentHash, const string& message, const string& author, const string& email) : Object("commit"), treeHash(treeHash), parentHash(parentHash), message(message), author(author), email(email) {}
 
 void Commit::save() {
     ostringstream content;
@@ -22,10 +23,18 @@ void Commit::save() {
     }
 
     content << "author " << author << "\n";
+    content << "email " << email << "\n";
     content << "message " << message << "\n";
 
     string commitContent = content.str();
 
+    /*  Commit Content Format
+        tree <treehash>
+        parent <parenthash>
+        author <authorName>
+        email <emailAddress>
+        message <message>
+    */
     hash = sha1(commitContent);
 
 

@@ -21,10 +21,17 @@ Tree::~Tree() {
     }
 }
 
+/*
+Add file in a tree
+Stored in map (filePath, hash)
+*/
 void Tree::addBlob(const string& filePath, const string& blobHash) {
     blobs[filePath] = blobHash;
 }
 
+/*
+This function creates a Tree or returns it if already created
+*/
 Tree* Tree::getOrCreateSubTree(const string& folderName) {
     if (subTrees.find(folderName) == subTrees.end()) {
         subTrees[folderName] = new Tree();
@@ -32,6 +39,10 @@ Tree* Tree::getOrCreateSubTree(const string& folderName) {
     return subTrees[folderName];
 }
 
+
+/*
+Scans the Index file and create a in-memory tree
+*/
 void Tree::buildFromIndex(const std::string& indexPath) {
 
     sortIndexFile(indexPath); // Ensure index file is sorted
@@ -60,23 +71,30 @@ void Tree::buildFromIndex(const std::string& indexPath) {
         currentTree->addBlob(filePath, blobHash);
     }
 }
-void Tree::showTreeElements(int depth) const {
-    std::string indent(depth * 2, ' '); // Indentation for tree levels
 
-    // Print blobs (files)
-    for (const auto& blob : blobs) {
-        std::cout << indent << "File: " << blob.first 
-                  << " -> " << blob.second << "\n";
-    }
+/*
+Just For Development Purpose
+*/
+// void Tree::showTreeElements(int depth) const {
+//     std::string indent(depth * 2, ' '); // Indentation for tree levels
 
-    // Print subtrees (folders)
-    for (const auto& subtree : subTrees) {
-        std::cout << indent << "Folder: " << subtree.first << "\n";
-        subtree.second->showTreeElements(depth + 1); // recursive call
-    }
-}
+//     // Print blobs (files)
+//     for (const auto& blob : blobs) {
+//         std::cout << indent << "File: " << blob.first 
+//                   << " -> " << blob.second << "\n";
+//     }
+
+//     // Print subtrees (folders)
+//     for (const auto& subtree : subTrees) {
+//         std::cout << indent << "Folder: " << subtree.first << "\n";
+//         subtree.second->showTreeElements(depth + 1); // recursive call
+//     }
+// }
 
 
+/*
+Save the in-memory tree into Objects folder recursively
+*/
 void Tree::save() {
     
     ostringstream contentStream;
@@ -109,4 +127,5 @@ void Tree::save() {
     out.close();
 
     cout << "Saved tree object: " << hash << endl;
+
 }

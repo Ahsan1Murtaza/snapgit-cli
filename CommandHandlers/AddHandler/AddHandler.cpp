@@ -11,6 +11,12 @@ using namespace std;
 
 AddHandler::AddHandler() {}
 
+/*
+This function handles Add Command
+    Creates Blob object
+    calls save
+    add file to staging area (Index File)
+*/
 void AddHandler::handleAdd(const string& filePath) {
 
     if (!filesystem::exists(filePath)) {

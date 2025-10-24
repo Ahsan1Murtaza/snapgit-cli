@@ -5,6 +5,10 @@
 
 using namespace std;
 
+/*
+This function returns currentCommitHash
+if not present then return empty string
+*/
 string getCurrentCommitHash() {
     ifstream in(".mygit/refs/heads/main");
 

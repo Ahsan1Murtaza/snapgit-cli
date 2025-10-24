@@ -12,7 +12,7 @@ class Tree : public Object {
     std::map<std::string, std::string> blobs; // fileName -> blobHash
     std::map<std::string, Tree*> subTrees; // folderName -> Tree object
 
-    std::string treeContent;
+    std::string treeContent; // To store content of tree
 public:
     Tree();
      ~Tree();   // to clean up dynamically allocated memory
@@ -30,7 +30,7 @@ public:
     Tree(const Tree&) = delete;
     Tree& operator=(const Tree&) = delete;
 
-    void showTreeElements(int depth = 0) const; // For development purpose
+    // void showTreeElements(int depth = 0) const; // For development purpose
 
 };
 
