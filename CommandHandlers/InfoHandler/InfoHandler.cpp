@@ -10,7 +10,7 @@ void InfoHandler::handleInfo(const string& name, const string& email) {
     string configPath = ".mygit/config";
 
     if (!fs::exists(configPath)) {
-        cerr << "Error: Repository not initialized. Run 'snapgit init' first.\n";
+        cerr << "Error: Repository not initialized. Run 'mygit init' first.\n";
         return;
     }
 
