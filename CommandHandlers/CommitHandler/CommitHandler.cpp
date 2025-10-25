@@ -8,6 +8,8 @@
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/UpdateHead/UpdateHead.h"
+#include "../../Helper/GetUserInfo/GetUserInfo.h"
+
 
 using namespace std;
 
@@ -44,7 +46,8 @@ void CommitHandler::handleCommit(const string &message)
     if (!currentHead.empty()) {
         parents.push_back(currentHead);
     }
-    Commit commit(tree.getHash(), parents, message, "Ahsan Murtaza", "ahsan@gmail.com");
+    auto [name, email] = getUserInfoFromConfig();
+    Commit commit(tree.getHash(), parents, message, name, email);
 
     commit.save();
     updateHead(commit.getHash());

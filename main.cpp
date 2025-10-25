@@ -4,6 +4,8 @@
 #include "CommandHandlers/InitHandler/InitHandler.h"
 #include "CommandHandlers/AddHandler/AddHandler.h"
 #include "CommandHandlers/CommitHandler/CommitHandler.h"
+#include "CommandHandlers/InfoHandler/InfoHandler.h"
+#include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
     /* Function to print help information
@@ -13,6 +15,9 @@ void printHelp() {
     cout << "SnapGit - A Simple git clone!\n\n";
     cout << "Available commands:\n";
     cout << "  init    Initialize a new repository\n";
+    cout << "  add     Add a file to the stagin area\n";
+    cout << "  commit -m commit staged file with a message\n";
+    cout << "  info    Set or display user info\n";
     cout << "  help    Show this help message\n";
 }
 
@@ -22,6 +27,7 @@ int main(int argc, char* argv[]) {
     InitHandler initHandler; // Create an instance of InitHandler
     AddHandler addHandler; // Create an instance of AddHandler
     CommitHandler commitHandler; // Create an instance of CommitHandler
+    InfoHandler  infoHandler;  // Create an instance of InfoHandler
 
     if (argc < 2) {
         printHelp();
@@ -63,6 +69,28 @@ int main(int argc, char* argv[]) {
         }
         commitHandler.handleCommit(commitMessage);
         
+    }
+    else if (command == "info") {
+        if (argc == 2) {
+            // Display current info
+            auto [name, email] = getUserInfoFromConfig();
+            if (name.empty() && email.empty()) {
+                cout << "No user info set. Use: snapgit info <name> <email>\n";
+            } else {
+                cout << "User Information:\n";
+                cout << "  Name : " << name << "\n";
+                cout << "  Email: " << email << "\n";
+            }
+        } else if (argc == 4) {
+            // Set info
+            string name = argv[2];
+            string email = argv[3];
+            infoHandler.handleInfo(name, email);
+        } else {
+            cout << "Usage:\n";
+            cout << "  snapgit info <name> <email>   # Set info\n";
+            cout << "  snapgit info                  # Show info\n";
+        }
     }
     else {
         cout << "Unknown command: " << command << "\n";
