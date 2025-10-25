@@ -29,14 +29,27 @@ void AddHandler::handleAdd(const string& filePath) {
         return;
     }
 
-    Blob blob(filePath);
+    filesystem::path p(filePath);
+    p = filesystem::weakly_canonical(p); // resolves . , .. and absolute structure if exists
+    filesystem::path current = filesystem::current_path(); // converts absolute path to relative from repo
+    string rel = filesystem::relative(p, current).generic_string();
+
+    // ensure consistent slashes and remove leading ./
+    if (rel.rfind("./", 0) == 0) {
+        rel = rel.substr(2);
+    }
+
+    cout << "Original Path " << filePath << endl; 
+    cout << "Relative Path " << rel << endl; 
+
+    Blob blob(rel);
     blob.save();
 
     // Add to Staging Area
     ofstream indexFile(".mygit/index", std::ios::app);
     if (indexFile) {
-        indexFile << filePath << " " << blob.getHash() << "\n";
+        indexFile << rel << " " << blob.getHash() << "\n";
         indexFile.close();
-        cout << "Added " << filePath << " to staging area \n";
+        cout << "Added " << rel << " to staging area \n";
     }
 }
