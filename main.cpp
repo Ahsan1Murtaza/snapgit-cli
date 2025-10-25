@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
             // Display current info
             auto [name, email] = getUserInfoFromConfig();
             if (name.empty() && email.empty()) {
-                cout << "No user info set. Use: snapgit info <name> <email>\n";
+                cout << "No user info set. Use: mygit info <name> <email>\n";
             } else {
                 cout << "User Information:\n";
                 cout << "  Name : " << name << "\n";
@@ -88,8 +88,8 @@ int main(int argc, char* argv[]) {
             infoHandler.handleInfo(name, email);
         } else {
             cout << "Usage:\n";
-            cout << "  snapgit info <name> <email>   # Set info\n";
-            cout << "  snapgit info                  # Show info\n";
+            cout << "  mygit info <name> <email>   # Set info\n";
+            cout << "  mygit info                  # Show info\n";
         }
     }
     else {
