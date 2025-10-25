@@ -11,15 +11,19 @@ using namespace std;
 namespace fs = std::filesystem;
 
 
-Commit::Commit(const string& treeHash, const string& parentHash, const string& message, const string& author, const string& email) : Object("commit"), treeHash(treeHash), parentHash(parentHash), message(message), author(author), email(email) {}
+Commit::Commit(const string& treeHash, const vector<string>& parentHashes, const string& message, const string& author, const string& email) : Object("commit"), treeHash(treeHash), parentHashes(parentHashes), message(message), author(author), email(email) {}
 
 void Commit::save() {
     ostringstream content;
 
     content << "tree " << treeHash << "\n";
 
-    if (!parentHash.empty()) {
-        content << "parent " << parentHash << "\n";
+    // Multiple Parent Support
+    for (const auto& parent: parentHashes) {
+
+        if (!parent.empty()) {
+            content << "parent " << parent << "\n";
+        }
     }
 
     content << "author " << author << "\n";

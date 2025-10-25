@@ -1,8 +1,3 @@
-
-
-// It will manage with commit class
-// But for now it will use Tree class to check functionality
-
 #include "CommitHandler.h"
 #include "../../Objects/Tree/Tree.h"
 #include "../../Objects/Commit/Commit.h"
@@ -43,7 +38,13 @@ void CommitHandler::handleCommit(const string &message)
 
     tree.save();
 
-    Commit commit(tree.getHash(), getCurrentCommitHash(), message, "Ahsan Murtaza", "ahsan@gmail.com");
+    // Wrap single parent into vector
+    vector<string> parents;
+    string currentHead = getCurrentCommitHash();
+    if (!currentHead.empty()) {
+        parents.push_back(currentHead);
+    }
+    Commit commit(tree.getHash(), parents, message, "Ahsan Murtaza", "ahsan@gmail.com");
 
     commit.save();
     updateHead(commit.getHash());
