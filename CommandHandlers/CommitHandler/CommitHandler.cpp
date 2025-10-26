@@ -8,6 +8,8 @@
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/UpdateHead/UpdateHead.h"
+#include "../../Helper/GetUserInfo/GetUserInfo.h"
+
 
 using namespace std;
 
@@ -31,6 +33,14 @@ void CommitHandler::handleCommit(const string &message)
         cerr << "Error: Repository not initialized. Please run 'init' command first.\n";
         return;
     }
+    
+    //Read user config
+    auto [name, email] = getUserInfoFromConfig();
+    if (name.empty() || email.empty()) {
+        cerr << "Error: User name or email not set.\n";
+        cerr << "Please config first.\n";
+        return;
+    }
 
     Tree tree;
     tree.buildFromIndex(".mygit/index");
@@ -44,7 +54,7 @@ void CommitHandler::handleCommit(const string &message)
     if (!currentHead.empty()) {
         parents.push_back(currentHead);
     }
-    Commit commit(tree.getHash(), parents, message, "Ahsan Murtaza", "ahsan@gmail.com");
+    Commit commit(tree.getHash(), parents, message, name, email);
 
     commit.save();
     updateHead(commit.getHash());
