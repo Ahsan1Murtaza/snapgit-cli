@@ -1,5 +1,33 @@
-**🧩 SnapGit - A Mini Version Control System (C++)**
+### **🧩 SnapGit - A Mini Version Control System**
 
 SnapGit is a simplified reimplementation of Git, written in C++.
 
-It mimics Git’s architecture — including objects, trees, blobs, commits, and references - while using your own .mygit directory.
+### Supporting:  
+
+  `mygit init`  
+  `mygit add`  
+  `mygit commit`  
+  `mygit config`  
+  Branches and merges (coming soon)
+
+
+### Setup
+
+1. **Clone the Repository**  
+   `git clone https://github.com/Ahsan1Murtaza/SnapGit.git`  
+   `cd SnapGit`
+
+2. **Build (Windows)**  
+   `build.bat`  
+   That creates a file `mygit.exe`
+
+3. **Add to PATH**  
+   Add the folder containing `mygit.exe` to system environment variables.
+
+
+### Now run anywhere:  
+
+`mygit init`  
+`mygit add <file>`  
+`mygit commit -m "<message>"`  
+`mygit config` or `mygit config user.name <name>` or `mygit config user.email <email>`
