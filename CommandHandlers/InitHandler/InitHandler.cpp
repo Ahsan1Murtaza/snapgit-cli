@@ -112,7 +112,12 @@ void InitHandler::handleInit() {
     }
     headsFile.close();
 
-    
+    //Create Config File
+    ofstream configFile(".mygit/config");
+    configFile << "[user]\n";
+    configFile << "    name = \n";
+    configFile << "    email = \n";
+    configFile.close();
 
 
 
