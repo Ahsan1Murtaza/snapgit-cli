@@ -4,6 +4,10 @@
 #include <string>
 using namespace std;
 
+/*
+This class is a base for Blob, Tree, Commit
+It has type and hash of object
+*/
 class Object {
 public:
     string type; // blob, tree, commit

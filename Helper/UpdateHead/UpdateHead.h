@@ -1,0 +1,9 @@
+#ifndef UPDATE_HEAD_H
+#define UPDATE_HEAD_H
+
+#include <string>
+
+
+void updateHead(const std::string& newHash);
+
+#endif // UPDATE_HEAD_H
