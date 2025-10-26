@@ -71,26 +71,33 @@ int main(int argc, char* argv[]) {
         
     }
     else if (command == "config") {
+        auto [name, email] = getUserInfoFromConfig();
         if (argc == 2) {
             // Display current info
-            auto [name, email] = getUserInfoFromConfig();
             if (name.empty() && email.empty()) {
-                cout << "No user info set. Use: mygit info <name> <email>\n";
+                cout << "No user info set. \n Use:\n mygit config user.name <name>\n mygit config user.email <email>";
             } else {
                 cout << "User Information:\n";
                 cout << "  Name : " << name << "\n";
                 cout << "  Email: " << email << "\n";
             }
-        } else if (argc == 4) {
+            return 1;
+        } 
+        if (argc == 4) {
             // Set info
-            string name = argv[2];
-            string email = argv[3];
+            if (string(argv[2]) == "user.name") {
+                name = argv[3];
+            }
+            else if (string(argv[2]) == "user.email") {
+                email = argv[3];
+            }
             configHandler.handleConfig(name, email);
-        } else {
-            cout << "Usage:\n";
-            cout << "  mygit info <name> <email>   # Set info\n";
-            cout << "  mygit info                  # Show info\n";
+            return 1;
         }
+        cout << "Usage:\n";
+        cout << "  mygit config user.name <name> \n";
+        cout << "  mygit config user.email <email> \n";
+        
     }
     else {
         cout << "Unknown command: " << command << "\n";
