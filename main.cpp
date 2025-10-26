@@ -4,7 +4,7 @@
 #include "CommandHandlers/InitHandler/InitHandler.h"
 #include "CommandHandlers/AddHandler/AddHandler.h"
 #include "CommandHandlers/CommitHandler/CommitHandler.h"
-#include "CommandHandlers/InfoHandler/InfoHandler.h"
+#include "CommandHandlers/ConfigHandler/ConfigHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -17,7 +17,7 @@ void printHelp() {
     cout << "  init    Initialize a new repository\n";
     cout << "  add     Add a file to the stagin area\n";
     cout << "  commit -m commit staged file with a message\n";
-    cout << "  info    Set or display user info\n";
+    cout << "  config    Set or display user config\n";
     cout << "  help    Show this help message\n";
 }
 
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     InitHandler initHandler; // Create an instance of InitHandler
     AddHandler addHandler; // Create an instance of AddHandler
     CommitHandler commitHandler; // Create an instance of CommitHandler
-    InfoHandler  infoHandler;  // Create an instance of InfoHandler
+    ConfigHandler  configHandler;  // Create an instance of ConfigHandler
 
     if (argc < 2) {
         printHelp();
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
         commitHandler.handleCommit(commitMessage);
         
     }
-    else if (command == "info") {
+    else if (command == "config") {
         if (argc == 2) {
             // Display current info
             auto [name, email] = getUserInfoFromConfig();
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
             // Set info
             string name = argv[2];
             string email = argv[3];
-            infoHandler.handleInfo(name, email);
+            configHandler.handleConfig(name, email);
         } else {
             cout << "Usage:\n";
             cout << "  mygit info <name> <email>   # Set info\n";

@@ -2,6 +2,9 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <algorithm>
+#include <cctype>
+
 using namespace std;
 
 pair<string, string> getUserInfoFromConfig() {
@@ -15,21 +18,28 @@ pair<string, string> getUserInfoFromConfig() {
     bool inUserSection = false;
 
     while (getline(configFile, line)) {
-        if (line.find("[user]") != string::npos)
+        if (line.find("[user]") != string::npos) {
             inUserSection = true;
-        else if (inUserSection && line.find("name") != string::npos)
+        } else if (inUserSection && line.find("name") != string::npos) {
             name = line.substr(line.find("=") + 1);
-        else if (inUserSection && line.find("email") != string::npos)
+        } else if (inUserSection && line.find("email") != string::npos) {
             email = line.substr(line.find("=") + 1);
+        }
     }
 
-    // Trim leading spaces
+    // --- Universal trim (handles spaces, tabs, carriage returns, newlines) ---
     auto trim = [](string &s) {
-        size_t pos = s.find_first_not_of(" \t");
-        if (pos != string::npos) s = s.substr(pos);
+        s.erase(remove_if(s.begin(), s.end(), [](unsigned char ch) {
+            return ch == '\r' || ch == '\n' || isspace(ch);
+        }), s.end());
     };
+
     trim(name);
     trim(email);
+
+    // --- If only whitespace or empty, clear it completely ---
+    if (name.find_first_not_of(" \t\r\n") == string::npos) name.clear();
+    if (email.find_first_not_of(" \t\r\n") == string::npos) email.clear();
 
     return {name, email};
 }

@@ -1,19 +1,21 @@
-#include "InfoHandler.h"
+#include "ConfigHandler.h"
+#include "../../Helper/RepoCheck/RepoCheck.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <filesystem>
 using namespace std;
 
-void InfoHandler::handleInfo(const string& name, const string& email) {
+void ConfigHandler::handleConfig(const string& name, const string& email) {
     namespace fs = std::filesystem;
-    string configPath = ".mygit/config";
+    
 
-    if (!fs::exists(configPath)) {
+    if (!isRepoInitialized()) {
         cerr << "Error: Repository not initialized. Run 'mygit init' first.\n";
         return;
     }
-
+    
+    string configPath = ".mygit/config";
     ofstream configFile(configPath);
     if (!configFile) {
         cerr << "Error: Could not open config file for writing.\n";
