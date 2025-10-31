@@ -1,5 +1,5 @@
 #include "GetCurrentCommitHash.h"
-
+#include "../GetHeadRef/GetHeadRef.h"
 #include <iostream>
 #include <fstream>
 
@@ -10,7 +10,10 @@ This function returns currentCommitHash
 if not present then return empty string
 */
 string getCurrentCommitHash() {
-    ifstream in(".mygit/refs/heads/main");
+    string currentBranchFile = getHeadRef();
+    string path = ".mygit/" + currentBranchFile;
+
+    ifstream in(path);
 
     if (!in.is_open()) {
         return "";
