@@ -5,6 +5,7 @@
 #include "CommandHandlers/AddHandler/AddHandler.h"
 #include "CommandHandlers/CommitHandler/CommitHandler.h"
 #include "CommandHandlers/ConfigHandler/ConfigHandler.h"
+#include "CommandHandlers/BranchHandler/BranchHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -18,6 +19,7 @@ void printHelp() {
     cout << "  add     Add a file to the stagin area\n";
     cout << "  commit -m commit staged file with a message\n";
     cout << "  config    Set or display user config\n";
+    cout << "  branch    Create a new branch or list all branches\n";
     cout << "  help    Show this help message\n";
 }
 
@@ -28,6 +30,7 @@ int main(int argc, char* argv[]) {
     AddHandler addHandler; // Create an instance of AddHandler
     CommitHandler commitHandler; // Create an instance of CommitHandler
     ConfigHandler  configHandler;  // Create an instance of ConfigHandler
+    BranchHandler  branchHandler;  // Create an instance of BranchHandler
 
     if (argc < 2) {
         printHelp();
@@ -99,6 +102,18 @@ int main(int argc, char* argv[]) {
         cout << "  mygit config user.email <email> \n";
         
     }
+    else if (command == "branch") {
+        if (argc == 2) {
+            branchHandler.handleBranch();  
+        } else if (argc == 3) {
+            branchHandler.handleBranch(argv[2]);  
+        } else {
+            cout << "Usage:\n";
+            cout << "  mygit branch             # List branches\n";
+            cout << "  mygit branch <name>      # Create a new branch\n";
+        }
+    }
+
     else {
         cout << "Unknown command: " << command << "\n";
         printHelp();
