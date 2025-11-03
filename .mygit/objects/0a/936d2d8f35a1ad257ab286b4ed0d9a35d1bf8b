@@ -82,11 +82,9 @@ int main(int argc, char* argv[]) {
         
     }
     else if (command == "status") {
-        StatusHandler statusHandler;
         statusHandler.handleStatus();
     }
     else if (command == "log") {
-        LogHandler logHandler;
         logHandler.handleLog();
     }
     else if (command == "config") {

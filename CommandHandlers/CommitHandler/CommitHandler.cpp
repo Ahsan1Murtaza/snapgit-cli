@@ -5,28 +5,19 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
+#include <fstream>
+#include <ctime>
+
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/UpdateHead/UpdateHead.h"
 #include "../../Helper/GetUserInfo/GetUserInfo.h"
 
-
 using namespace std;
+namespace fs = std::filesystem;
 
-CommitHandler::CommitHandler() {};
+CommitHandler::CommitHandler() {}
 
-/*
-This function handles Commit Command
-
-    Create Tree instance
-    calls buildFromIndex
-    calls save
-
-    Create Commit object
-    calls save
-    calls helper method to update head
-
-*/
 void CommitHandler::handleCommit(const string &message)
 {
     if (!isRepoInitialized()) {
@@ -34,30 +25,54 @@ void CommitHandler::handleCommit(const string &message)
         return;
     }
     
-    //Read user config
+    // Read user config
     auto [name, email] = getUserInfoFromConfig();
     if (name.empty() || email.empty()) {
         cerr << "Error: User name or email not set.\n";
-        cerr << "Please config first.\n";
+        cerr << "Please run: mygit config user.name <name> and mygit config user.email <email>\n";
         return;
     }
 
+    // ✅ Ensure .mygit/commits directory exists before doing anything else
+    fs::create_directories(".mygit/commits");
+
+    // Build and save tree
     Tree tree;
     tree.buildFromIndex(".mygit/index");
-    // tree.showTreeElements();
-
     tree.save();
 
-    // Wrap single parent into vector
+    // Collect parent commit
     vector<string> parents;
     string currentHead = getCurrentCommitHash();
     if (!currentHead.empty()) {
         parents.push_back(currentHead);
     }
-    Commit commit(tree.getHash(), parents, message, name, email);
 
+    // Create and save commit
+    Commit commit(tree.getHash(), parents, message, name, email);
     commit.save();
     updateHead(commit.getHash());
 
-    // cout << "Committed with message: " << message << "\n";
+    // ✅ Write human-readable commit log file
+    string commitHash = commit.getHash();
+    string commitPath = ".mygit/commits/" + commitHash + ".commit";
+    ofstream commitFile(commitPath);
+
+    if (commitFile.is_open()) {
+        time_t now = time(0);
+        string dateTime = ctime(&now);
+        dateTime.pop_back(); // remove newline
+
+        commitFile << "Commit: " << commitHash << "\n";
+        commitFile << "Author: " << name << " <" << email << ">\n";
+        commitFile << "Date: " << dateTime << "\n";
+        commitFile << "Message: " << message << "\n";
+
+        commitFile.close();
+        cout << "Commit log saved at: " << commitPath << "\n";
+    } else {
+        cerr << "Warning: Could not create " << commitPath << "\n";
+    }
+
+    cout << "Committed with message: \"" << message << "\"\n";
 }
