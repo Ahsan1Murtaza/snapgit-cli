@@ -6,31 +6,34 @@
 #include "CommandHandlers/CommitHandler/CommitHandler.h"
 #include "CommandHandlers/ConfigHandler/ConfigHandler.h"
 #include "CommandHandlers/BranchHandler/BranchHandler.h"
+#include "CommandHandlers/CheckoutHandler/CheckoutHandler.h"  // NEW: Checkout handler added
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
-    /* Function to print help information
+
+/* Function to print help information
 Displays available commands and their descriptions to the user.
 */
 void printHelp() {
     cout << "SnapGit - A Simple git clone!\n\n";
     cout << "Available commands:\n";
-    cout << "  init    Initialize a new repository\n";
-    cout << "  add     Add a file to the stagin area\n";
-    cout << "  commit -m commit staged file with a message\n";
-    cout << "  config    Set or display user config\n";
-    cout << "  branch    Create a new branch or list all branches\n";
-    cout << "  help    Show this help message\n";
+    cout << "  init       Initialize a new repository\n";
+    cout << "  add        Add a file to the staging area\n";
+    cout << "  commit -m  Commit staged file with a message\n";
+    cout << "  config     Set or display user config\n";
+    cout << "  branch     Create a new branch or list all branches\n";
+    cout << "  checkout   Switch branches or create new branch\n";  // NEW: Added checkout
+    cout << "  help       Show this help message\n";
 }
 
 int main(int argc, char* argv[]) {
 
-
-    InitHandler initHandler; // Create an instance of InitHandler
-    AddHandler addHandler; // Create an instance of AddHandler
-    CommitHandler commitHandler; // Create an instance of CommitHandler
-    ConfigHandler  configHandler;  // Create an instance of ConfigHandler
-    BranchHandler  branchHandler;  // Create an instance of BranchHandler
+    InitHandler initHandler;       // Create an instance of InitHandler
+    AddHandler addHandler;         // Create an instance of AddHandler
+    CommitHandler commitHandler;   // Create an instance of CommitHandler
+    ConfigHandler configHandler;   // Create an instance of ConfigHandler
+    BranchHandler branchHandler;   // Create an instance of BranchHandler
+    CheckoutHandler checkoutHandler; // NEW: Create an instance of CheckoutHandler
 
     if (argc < 2) {
         printHelp();
@@ -38,8 +41,6 @@ int main(int argc, char* argv[]) {
     }
 
     string command = argv[1]; // Get the command from command line arguments
-
-    
 
     if (command == "init") {
         initHandler.handleInit();
@@ -71,7 +72,6 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         commitHandler.handleCommit(commitMessage);
-        
     }
     else if (command == "config") {
         auto [name, email] = getUserInfoFromConfig();
@@ -100,7 +100,6 @@ int main(int argc, char* argv[]) {
         cout << "Usage:\n";
         cout << "  mygit config user.name <name> \n";
         cout << "  mygit config user.email <email> \n";
-        
     }
     else if (command == "branch") {
         if (argc == 2) {
@@ -113,7 +112,32 @@ int main(int argc, char* argv[]) {
             cout << "  mygit branch <name>      # Create a new branch\n";
         }
     }
-
+    // NEW: Checkout command handling
+    else if (command == "checkout") {
+        if (argc < 3) {
+            cout << "Usage:\n";
+            cout << "  mygit checkout <branch-name>\n";
+            cout << "  mygit checkout -b <branch-name>\n";
+            return 1;
+        }
+        
+        bool createBranch = false;
+        string branchName;
+        
+        if (string(argv[2]) == "-b") {
+            if (argc < 4) {
+                cerr << "Error: 'checkout -b' requires a branch name.\n";
+                return 1;
+            }
+            createBranch = true;
+            branchName = argv[3];
+        }
+        else {
+            branchName = argv[2];
+        }
+        
+        checkoutHandler.handleCheckout(branchName, createBranch);
+    }
     else {
         cout << "Unknown command: " << command << "\n";
         printHelp();
