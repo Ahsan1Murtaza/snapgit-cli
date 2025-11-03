@@ -1,0 +1,16 @@
+#include "GetCurrentCommitHash.h"
+#include "../GetHeadRef/GetHeadRef.h"
+#include <fstream>
+#include <string>
+
+std::string getCurrentCommitHash() {
+    std::string currentBranchFile = GetHeadRef::getRef(); // ✅ FIXED CALL
+    std::string path = ".mygit/" + currentBranchFile;
+
+    std::ifstream in(path);
+    if (!in.is_open()) return "";
+
+    std::string hash;
+    std::getline(in, hash);
+    return hash;
+}

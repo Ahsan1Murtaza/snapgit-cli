@@ -1,10 +1,10 @@
-#ifndef LOG_HANDLER_H
-#define LOG_HANDLER_H
+#pragma once
+#include <string>
 
 class LogHandler {
 public:
-    LogHandler();
-    void handleLog();
-};
+    void showLog();
 
-#endif
+private:
+    void printCommitDetails(const std::string& commitHash);
+};

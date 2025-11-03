@@ -1,0 +1,25 @@
+#include "GetCurrentCommitHash.h"
+#include <fstream>
+#include <string>
+
+std::string getCurrentCommitHash() {
+    std::ifstream headFile(".mygit/HEAD");
+    if (!headFile.is_open()) return "";
+
+    std::string headLine;
+    std::getline(headFile, headLine);
+    headFile.close();
+
+    // HEAD should be "ref: refs/heads/main" or similar
+    if (headLine.rfind("ref: ", 0) != 0) return "";
+
+    std::string branchRef = headLine.substr(5); // e.g., "refs/heads/main"
+    std::ifstream branchFile(".mygit/" + branchRef);
+    if (!branchFile.is_open()) return "";
+
+    std::string commitHash;
+    std::getline(branchFile, commitHash);
+    branchFile.close();
+
+    return commitHash;
+}

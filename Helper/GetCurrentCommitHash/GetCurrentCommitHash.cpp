@@ -1,25 +1,31 @@
-#include "GetCurrentCommitHash.h"
-#include "../GetHeadRef/GetHeadRef.h"
-#include <iostream>
 #include <fstream>
+#include <string>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
 
-/*
-This function returns currentCommitHash
-if not present then return empty string
-*/
 string getCurrentCommitHash() {
-    string currentBranchFile = getHeadRef();
-    string path = ".mygit/" + currentBranchFile;
+    string headPath = ".mygit/HEAD";
+    ifstream headFile(headPath);
+    if (!headFile) return "";
 
-    ifstream in(path);
+    string headLine;
+    getline(headFile, headLine);
+    headFile.close();
 
-    if (!in.is_open()) {
-        return "";
+    // Check if HEAD points to a branch
+    if (headLine.rfind("ref: ", 0) == 0) {
+        string branchPath = ".mygit/" + headLine.substr(5);
+        ifstream branchFile(branchPath);
+        if (!branchFile) return "";
+        string commitHash;
+        getline(branchFile, commitHash);
+        branchFile.close();
+        return commitHash;
+    } else {
+        // Detached HEAD (direct commit hash)
+        return headLine;
     }
-    string hash;
-    getline(in, hash);
-
-    return hash;
 }
+

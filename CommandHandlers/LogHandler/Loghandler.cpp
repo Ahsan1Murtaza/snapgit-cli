@@ -1,44 +1,55 @@
 #include "LogHandler.h"
+#include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
+#include "../../Helper/RepoCheck/RepoCheck.h"
 #include <iostream>
-#include <filesystem>
 #include <fstream>
-#include <string>
 
 using namespace std;
-namespace fs = std::filesystem;
 
-LogHandler::LogHandler() {}
-
-void LogHandler::handleLog() {
-    string commitsDir = ".mygit/commits";
-
-    if (!fs::exists(commitsDir)) {
-        cout << "No commits found.\n";
+void LogHandler::showLog() {
+    if (!RepoCheck::isRepoInitialized()) {
+        cout << "fatal: not a snapgit repository\n";
         return;
     }
 
-    cout << "Commit history:\n\n";
+    string currentCommit = getCurrentCommitHash();
+    if (currentCommit.empty()) {
+        cout << "No commits yet.\n";
+        return;
+    }
 
-    for (const auto &entry : fs::directory_iterator(commitsDir)) {
-        if (entry.path().extension() == ".txt" || entry.path().extension() == ".commit") {
+    cout << "=== SnapGit Log ===\n";
 
-            cout << "Opening file: " << entry.path() << endl;
-            ifstream file(entry.path());
+    while (!currentCommit.empty()) {
+        printCommitDetails(currentCommit);
 
-            if (!file.is_open()) {
-                cerr << "Failed to open file: " << entry.path() << endl;
-                continue;
-            }
+        string commitPath = ".mygit/commits/" + currentCommit + ".commit";
+        ifstream file(commitPath);
+        if (!file) break;
 
-            string line;
-            cout << "Commit file: " << entry.path().filename().string() << "\n";
-
-            while (std::getline(file, line)) {
-                cout << "    " << line << "\n";
-            }
-            cout << "\n";
-            file.close();
+        string line, parentHash = "";
+        while (getline(file, line)) {
+            if (line.rfind("parent ", 0) == 0)
+                parentHash = line.substr(7);
         }
+
+        file.close();
+        currentCommit = parentHash;
     }
 }
 
+void LogHandler::printCommitDetails(const string& commitHash) {
+    string path = ".mygit/commits/" + commitHash + ".commit";
+    ifstream file(path);
+    if (!file) return;
+
+    cout << "\ncommit " << commitHash << "\n";
+    string line;
+    while (getline(file, line)) {
+        if (line.rfind("author ", 0) == 0)
+            cout << line << "\n";
+        else if (line.rfind("message ", 0) == 0)
+            cout << "    " << line.substr(8) << "\n";
+    }
+    file.close();
+}

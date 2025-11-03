@@ -1,0 +1,70 @@
+#include "CommitHandler.h"
+#include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
+#include "../../Helper/RepoCheck/RepoCheck.h"
+#include "../../Helper/Hash/Hash.h"
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <chrono>
+
+using namespace std;
+namespace fs = std::filesystem;
+
+void CommitHandler::handleCommit(const string& message) {
+    if (!RepoCheck::isRepoInitialized()) {
+        cout << "fatal: not a snapgit repository\n";
+        return;
+    }
+
+    string treeHash = createTree();
+    string parentHash = getCurrentCommitHash();
+
+    // Generate commit content
+    string commitContent;
+    commitContent += "tree " + treeHash + "\n";
+    if (!parentHash.empty()) commitContent += "parent " + parentHash + "\n";
+
+    // Author info
+    ifstream config(".mygit/config");
+    string line, authorName = "unknown", authorEmail = "unknown";
+    while (getline(config, line)) {
+        if (line.rfind("user.name ", 0) == 0) authorName = line.substr(10);
+        else if (line.rfind("user.email ", 0) == 0) authorEmail = line.substr(11);
+    }
+    config.close();
+
+    commitContent += "author " + authorName + " <" + authorEmail + ">\n";
+    commitContent += "message " + message + "\n";
+
+    // Compute commit hash
+    string commitHash = Hash::sha1FromString(commitContent);
+
+    // Save commit object
+    fs::path commitPath = ".mygit/commits/" + commitHash + ".commit";
+    fs::create_directories(commitPath.parent_path());
+    ofstream commitFile(commitPath);
+    commitFile << commitContent;
+    commitFile.close();
+
+    cout << "Commit log saved at: " << commitPath << "\n";
+    cout << "Committed with message: \"" << message << "\"\n";
+
+    // Update branch ref (HEAD)
+    ifstream headFile(".mygit/HEAD");
+    string headLine;
+    getline(headFile, headLine);
+    headFile.close();
+
+    if (headLine.rfind("ref: ", 0) == 0) {
+        string branchRef = headLine.substr(5);
+        ofstream branchFile(".mygit/" + branchRef);
+        branchFile << commitHash << endl;
+        branchFile.close();
+    }
+}
+
+string CommitHandler::createTree() {
+    // For simplicity, assume all staged files are included in tree
+    // Normally you’d hash each blob and create tree objects
+    return "dummy_tree_hash"; // placeholder
+}
