@@ -3,8 +3,12 @@
 #include <sstream>
 #include <filesystem>
 #include <iostream>
+#include <vector>
 using namespace std;
 namespace fs = std::filesystem;
+
+// Global variable to track index entries
+vector<pair<string, string>> indexEntries;
 
 void restoreTree(const string& treeHash, const string& basePath) {
     string folder = ".mygit/objects/" + treeHash.substr(0, 2);
@@ -27,6 +31,7 @@ void restoreTree(const string& treeHash, const string& basePath) {
         string fullPath = basePath.empty() ? name : basePath + "/" + name;
         
         if (type == "blob") {
+            // Restore file from blob
             string blobFolder = ".mygit/objects/" + hash.substr(0, 2);
             string blobFile = blobFolder + "/" + hash.substr(2);
             
@@ -47,12 +52,25 @@ void restoreTree(const string& treeHash, const string& basePath) {
             out.close();
             
             cout << "Restored: " << fullPath << endl;
+            
+            // ✨ NEW: Add to index entries
+            indexEntries.push_back({fullPath, hash});
         }
         else if (type == "tree") {
             fs::create_directories(fullPath);
-            restoreTree(hash, fullPath);
+            restoreTree(hash, fullPath);  // Recursive call
         }
     }
     
     in.close();
+}
+
+// ✨ NEW: Function to write index file
+void writeIndexFile() {
+    ofstream indexFile(".mygit/index");
+    for (const auto& entry : indexEntries) {
+        indexFile << entry.first << " " << entry.second << "\n";
+    }
+    indexFile.close();
+    indexEntries.clear();  // Clear for next use
 }
