@@ -22,7 +22,7 @@ void updateHead(const string& newHash) {
     }
     else {
         // Detached HEAD -> Write commit hash directly into .mygit/HEAD
-        ofstream out(".mugit/HEAD", ios::trunc);
+        ofstream out(".mygit/HEAD", ios::trunc);
         if (!out.is_open()) {
             cerr << "Error : Could not open .mygit/HEAD for writing" << endl;
             return;

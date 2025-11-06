@@ -4,7 +4,6 @@
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/ReadCommit/ReadCommit.h"
 #include "../../Helper/RestoreTree/RestoreTree.h"
-#include "../../Helper/UpdateHead/UpdateHead.h"
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -84,7 +83,7 @@ void CheckoutHandler::handleCheckout(const string& refInput) {
     CommitData commitData = readCommit(targetCommitHash);
     if (commitData.treeHash.empty()) {
         cerr << "Error: Invalid or corrupted commit: " << targetCommitHash << endl;
-        return;;
+        return;
     }
     
     cout << "Switching to " << (isHash ? "commit (detached HEAD) " : "branch '" + refInput + "'") << "...\n";
@@ -97,11 +96,22 @@ void CheckoutHandler::handleCheckout(const string& refInput) {
     
     // Update HEAD
     if (isHash) {
-        ofstream head(".mygit.HEAD", ios::trunc);
+        ofstream head(".mygit/HEAD", ios::trunc);
+        if (!head.is_open()) {
+            cerr << "Error: Could not open .mygit/HEAD for writing" << endl;
+            return;
+        }
         head << targetCommitHash;
+        head.close();
     }
     else {
-        updateHead(targetRef);
+        ofstream head(".mygit/HEAD", ios::trunc);
+        if (!head.is_open()) {
+            cerr << "Error: Could not open .mygit/HEAD for writing" << endl;
+            return;
+        }
+        head << "ref: " + targetRef;
+        head.close();
     }
 
 }
