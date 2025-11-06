@@ -17,10 +17,7 @@ g++ .\main.cpp ^
 .\Helper\GetAllBranches\GetAllBranches.cpp ^
 .\Helper\ReadCommit\ReadCommit.cpp ^
 .\Helper\RestoreTree\RestoreTree.cpp ^
-.\Objects\Blob\Blob.cpp ^
-.\Objects\Tree\Tree.cpp ^
-.\Objects\Commit\Commit.cpp ^
--o mygit.exe -static -lssl -lcrypto -lws2_32
+.\Objects\Blob\Blob.cpp .\Objects\Tree\Tree.cpp .\Objects\Commit\Commit.cpp -o mygit.exe -static -lssl -lcrypto -lws2_32
 echo.
 echo Build complete! Run mygit.exe to test.
 pause

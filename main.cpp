@@ -1,12 +1,13 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include "CommandHandlers/InitHandler/InitHandler.h"
 #include "CommandHandlers/AddHandler/AddHandler.h"
 #include "CommandHandlers/CommitHandler/CommitHandler.h"
 #include "CommandHandlers/ConfigHandler/ConfigHandler.h"
 #include "CommandHandlers/BranchHandler/BranchHandler.h"
-#include "CommandHandlers/CheckoutHandler/CheckoutHandler.h"  // NEW: Checkout handler added
+#include "CommandHandlers/CheckoutHandler/CheckoutHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -117,26 +118,25 @@ int main(int argc, char* argv[]) {
         if (argc < 3) {
             cout << "Usage:\n";
             cout << "  mygit checkout <branch-name>\n";
-            cout << "  mygit checkout -b <branch-name>\n";
+            cout << "  mygit checkout <hash-code>\n";
             return 1;
         }
         
-        bool createBranch = false;
-        string branchName;
+        string arg = argv[2]; // Could be branch or commit hash
+        string branchName, hashCode;
         
-        if (string(argv[2]) == "-b") {
-            if (argc < 4) {
-                cerr << "Error: 'checkout -b' requires a branch name.\n";
-                return 1;
-            }
-            createBranch = true;
-            branchName = argv[3];
+
+        if (arg.size() == 40 && all_of(arg.begin(), arg.end(), ::isxdigit)) {
+            hashCode = arg;
+            checkoutHandler.handleCheckout(hashCode);
         }
         else {
-            branchName = argv[2];
+            branchName = arg;
+            checkoutHandler.handleCheckout(branchName);
         }
+
         
-        checkoutHandler.handleCheckout(branchName, createBranch);
+        
     }
     else {
         cout << "Unknown command: " << command << "\n";
