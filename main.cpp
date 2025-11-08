@@ -8,6 +8,8 @@
 #include "CommandHandlers/ConfigHandler/ConfigHandler.h"
 #include "CommandHandlers/BranchHandler/BranchHandler.h"
 #include "CommandHandlers/CheckoutHandler/CheckoutHandler.h"
+#include "CommandHandlers/LogHandler/LogHandler.h"
+#include "CommandHandlers/StatusHandler/StatusHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -24,6 +26,8 @@ void printHelp() {
     cout << "  config     Set or display user config\n";
     cout << "  branch     Create a new branch or list all branches\n";
     cout << "  checkout   Switch branches or create new branch\n";  // NEW: Added checkout
+    cout << "  log        Shows the log of the repository\n";
+    cout << "  status     Shows the status of the repository\n";
     cout << "  help       Show this help message\n";
 }
 
@@ -35,6 +39,8 @@ int main(int argc, char* argv[]) {
     ConfigHandler configHandler;   // Create an instance of ConfigHandler
     BranchHandler branchHandler;   // Create an instance of BranchHandler
     CheckoutHandler checkoutHandler; // NEW: Create an instance of CheckoutHandler
+    LogHandler logHandler;         // Create an instance of LogHandler
+    StatusHandler statusHandler;   //  Create an instance of StatusHandler
 
     if (argc < 2) {
         printHelp();
@@ -138,6 +144,14 @@ int main(int argc, char* argv[]) {
         
         
     }
+    else if (command == "log") {
+        logHandler.handleLog();
+    }
+
+    else if (command == "status") {
+        statusHandler.handleStatus();
+    }
+
     else {
         cout << "Unknown command: " << command << "\n";
         printHelp();
