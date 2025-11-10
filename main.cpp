@@ -8,6 +8,7 @@
 #include "CommandHandlers/ConfigHandler/ConfigHandler.h"
 #include "CommandHandlers/BranchHandler/BranchHandler.h"
 #include "CommandHandlers/CheckoutHandler/CheckoutHandler.h"
+#include "CommandHandlers/ResetHandler/ResetHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -23,7 +24,8 @@ void printHelp() {
     cout << "  commit -m  Commit staged file with a message\n";
     cout << "  config     Set or display user config\n";
     cout << "  branch     Create a new branch or list all branches\n";
-    cout << "  checkout   Switch branches or create new branch\n";  // NEW: Added checkout
+    cout << "  checkout   Switch branches or create new branch\n";
+    cout << "  reset      Reset current branch to specified commit\n";  // NEW: Added reset
     cout << "  help       Show this help message\n";
 }
 
@@ -34,7 +36,8 @@ int main(int argc, char* argv[]) {
     CommitHandler commitHandler;   // Create an instance of CommitHandler
     ConfigHandler configHandler;   // Create an instance of ConfigHandler
     BranchHandler branchHandler;   // Create an instance of BranchHandler
-    CheckoutHandler checkoutHandler; // NEW: Create an instance of CheckoutHandler
+    CheckoutHandler checkoutHandler; // Create an instance of CheckoutHandler
+    ResetHandler resetHandler;     // Create an instance of ResetHandler
 
     if (argc < 2) {
         printHelp();
@@ -113,7 +116,6 @@ int main(int argc, char* argv[]) {
             cout << "  mygit branch <name>      # Create a new branch\n";
         }
     }
-    // NEW: Checkout command handling
     else if (command == "checkout") {
         if (argc < 3) {
             cout << "Usage:\n";
@@ -125,7 +127,6 @@ int main(int argc, char* argv[]) {
         string arg = argv[2]; // Could be branch or commit hash
         string branchName, hashCode;
         
-
         if (arg.size() == 40 && all_of(arg.begin(), arg.end(), ::isxdigit)) {
             hashCode = arg;
             checkoutHandler.handleCheckout(hashCode);
@@ -134,9 +135,33 @@ int main(int argc, char* argv[]) {
             branchName = arg;
             checkoutHandler.handleCheckout(branchName);
         }
-
+    }
+    // NEW: Reset command handling
+    else if (command == "reset") {
+        if (argc < 3) {
+            cout << "Usage:\n";
+            cout << "  mygit reset --hard <commit-hash>\n";
+            return 1;
+        }
         
+        bool hard = false;
+        string targetCommit;
         
+        if (string(argv[2]) == "--hard") {
+            if (argc < 4) {
+                cerr << "Error: 'reset --hard' requires a commit hash.\n";
+                return 1;
+            }
+            hard = true;
+            targetCommit = argv[3];
+        }
+        else {
+            cerr << "Error: Only '--hard' reset is supported for now.\n";
+            cout << "Usage: mygit reset --hard <commit-hash>\n";
+            return 1;
+        }
+        
+        resetHandler.handleReset(targetCommit, hard);
     }
     else {
         cout << "Unknown command: " << command << "\n";
