@@ -10,7 +10,6 @@
 #include "CommandHandlers/CheckoutHandler/CheckoutHandler.h"
 #include "CommandHandlers/ResetHandler/ResetHandler.h"
 #include "CommandHandlers/LogHandler/LogHandler.h"
-#include "CommandHandlers/StatusHandler/StatusHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
