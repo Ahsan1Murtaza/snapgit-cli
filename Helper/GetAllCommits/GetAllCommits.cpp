@@ -114,8 +114,12 @@ vector<CommitInfo> getAllCommits(const string &headCommitHash) {
         // We push them in the order they appear in the same file.
         // Using stack behaves depth first behaviour.
 
-        for (const string &p : info.parents) {
-            if (!p.empty() && !visited.count(p)) st.push(p);
+        // for (const string &p : info.parents) {
+        //     if (!p.empty() && !visited.count(p)) st.push(p);
+        // }
+
+        for (auto it = info.parents.rbegin(); it != info.parents.rend(); ++it) {
+            if (!visited.count(*it)) st.push(*it);
         }
     }
 
