@@ -9,6 +9,8 @@
 #include "CommandHandlers/BranchHandler/BranchHandler.h"
 #include "CommandHandlers/CheckoutHandler/CheckoutHandler.h"
 #include "CommandHandlers/ResetHandler/ResetHandler.h"
+#include "CommandHandlers/LogHandler/LogHandler.h"
+#include "CommandHandlers/StatusHandler/StatusHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -25,7 +27,8 @@ void printHelp() {
     cout << "  config     Set or display user config\n";
     cout << "  branch     Create a new branch or list all branches\n";
     cout << "  checkout   Switch branches or create new branch\n";
-    cout << "  reset      Reset current branch to specified commit\n";  // NEW: Added reset
+    cout << "  reset      Reset current branch to specified commit\n";
+    cout << "  log        Shows the log of the repository\n";
     cout << "  help       Show this help message\n";
 }
 
@@ -38,6 +41,7 @@ int main(int argc, char* argv[]) {
     BranchHandler branchHandler;   // Create an instance of BranchHandler
     CheckoutHandler checkoutHandler; // Create an instance of CheckoutHandler
     ResetHandler resetHandler;     // Create an instance of ResetHandler
+    LogHandler logHandler;         // Create an instance of LogHandler
 
     if (argc < 2) {
         printHelp();
@@ -163,6 +167,11 @@ int main(int argc, char* argv[]) {
         
         resetHandler.handleReset(targetCommit, hard);
     }
+    else if (command == "log") {
+        logHandler.handleLog();
+    }
+
+  
     else {
         cout << "Unknown command: " << command << "\n";
         printHelp();

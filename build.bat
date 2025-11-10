@@ -6,8 +6,9 @@ g++ .\main.cpp ^
 .\CommandHandlers\CommitHandler\CommitHandler.cpp ^
 .\CommandHandlers\ConfigHandler\ConfigHandler.cpp ^
 .\CommandHandlers\BranchHandler\BranchHandler.cpp ^
+.\CommandHandlers\LogHandler\LogHandler.cpp ^
 .\CommandHandlers\CheckoutHandler\CheckoutHandler.cpp ^
-.\CommandHandlers\ResetHandler\ResetHandler.cpp ^
+.\Helper\GetAllCommits\GetAllCommits.cpp ^
 .\Helper\Hash\Hash.cpp ^
 .\Helper\RepoCheck\RepoCheck.cpp ^
 .\Helper\SortIndex\SortIndex.cpp ^
@@ -18,10 +19,7 @@ g++ .\main.cpp ^
 .\Helper\GetAllBranches\GetAllBranches.cpp ^
 .\Helper\ReadCommit\ReadCommit.cpp ^
 .\Helper\RestoreTree\RestoreTree.cpp ^
-.\Objects\Blob\Blob.cpp ^
-.\Objects\Tree\Tree.cpp ^
-.\Objects\Commit\Commit.cpp ^
--o mygit.exe -static -lssl -lcrypto -lws2_32
+.\Objects\Blob\Blob.cpp .\Objects\Tree\Tree.cpp .\Objects\Commit\Commit.cpp -o mygit.exe -static -lssl -lcrypto -lcrypt32 -lws2_32
 echo.
 echo Build complete! Run mygit.exe to test.
 pause
