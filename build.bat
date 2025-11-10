@@ -7,7 +7,6 @@ g++ .\main.cpp ^
 .\CommandHandlers\ConfigHandler\ConfigHandler.cpp ^
 .\CommandHandlers\BranchHandler\BranchHandler.cpp ^
 .\CommandHandlers\LogHandler\LogHandler.cpp ^
-.\CommandHandlers\StatusHandler\StatusHandler.cpp ^
 .\CommandHandlers\CheckoutHandler\CheckoutHandler.cpp ^
 .\Helper\GetAllCommits\GetAllCommits.cpp ^
 .\Helper\Hash\Hash.cpp ^
