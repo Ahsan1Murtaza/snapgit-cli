@@ -8,7 +8,11 @@ SnapGit is a simplified reimplementation of Git, written in C++.
   `mygit add`  
   `mygit commit`  
   `mygit config`  
-  Branches and merges (coming soon)
+  `mygit log`  
+  `mygit reset`  
+  `mygit branch`  
+  `mygit checkout`  
+   Merge and Status (coming soon)
 
 
 ### Setup
@@ -31,3 +35,8 @@ SnapGit is a simplified reimplementation of Git, written in C++.
 `mygit add <file>`  
 `mygit commit -m "<message>"`  
 `mygit config` or `mygit config user.name <name>` or `mygit config user.email <email>`
+`mygit reset --hard <commitHash>`
+`mygit branch` or `mygit branch <branchName>`
+`mygit log`
+`mygit checkout <branchName>` or `mygit checkout <commitHash>`
+`mygit --help`
