@@ -8,7 +8,7 @@ using namespace std;
 struct CommitInfo {
     string hash;
     string tree;
-    string parent;
+    vector<string> parents; // Supports multi parents
     string author;
     string email;
     string message;
