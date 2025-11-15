@@ -10,6 +10,7 @@
 #include "CommandHandlers/CheckoutHandler/CheckoutHandler.h"
 #include "CommandHandlers/ResetHandler/ResetHandler.h"
 #include "CommandHandlers/LogHandler/LogHandler.h"
+#include "CommandHandlers/StatusHandler/StatusHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -41,6 +42,7 @@ int main(int argc, char* argv[]) {
     CheckoutHandler checkoutHandler; // Create an instance of CheckoutHandler
     ResetHandler resetHandler;     // Create an instance of ResetHandler
     LogHandler logHandler;         // Create an instance of LogHandler
+    StatusHandler statusHandler;
 
     if (argc < 2) {
         printHelp();
@@ -170,6 +172,9 @@ int main(int argc, char* argv[]) {
         logHandler.handleLog();
     }
 
+    else if (command == "status") {
+        statusHandler.handleStatus();
+    }
   
     else {
         cout << "Unknown command: " << command << "\n";
