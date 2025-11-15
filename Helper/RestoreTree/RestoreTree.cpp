@@ -29,6 +29,9 @@ void restoreTree(const string& treeHash, const string& basePath) {
         if (name.empty()) continue;
         
         string fullPath = basePath.empty() ? name : basePath + "/" + name;
+        fullPath = fs::weakly_canonical(fullPath);
+        fs::path current = fs::current_path();
+        string rel = fs::relative(fullPath, current).generic_string(); // relative to repo root
         
         if (type == "blob") {
             // Restore file from blob
@@ -53,7 +56,7 @@ void restoreTree(const string& treeHash, const string& basePath) {
             
             cout << "Restored: " << fullPath << endl;
             
-            // ✨ NEW: Add to index entries
+            // Add to index entries
             indexEntries.push_back({fullPath, hash});
         }
         else if (type == "tree") {
@@ -65,7 +68,7 @@ void restoreTree(const string& treeHash, const string& basePath) {
     in.close();
 }
 
-// ✨ NEW: Function to write index file
+// Function to write index file
 void writeIndexFile() {
     ofstream indexFile(".mygit/index");
     for (const auto& entry : indexEntries) {
