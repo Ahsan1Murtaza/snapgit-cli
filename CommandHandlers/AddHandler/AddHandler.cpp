@@ -54,4 +54,5 @@ void AddHandler::handleAdd(const string& filePath) {
     for (auto& [path, hash] : indexMap) {
         indexOut << path << " " << hash << "\n";
     }
+    indexOut.close();
 }
