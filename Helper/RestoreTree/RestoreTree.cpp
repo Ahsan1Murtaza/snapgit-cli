@@ -29,7 +29,7 @@ void restoreTree(const string& treeHash, const string& basePath) {
         if (name.empty()) continue;
         
         string fullPath = basePath.empty() ? name : basePath + "/" + name;
-        fullPath = fs::weakly_canonical(fullPath);
+        fullPath = fs::weakly_canonical(fullPath).string();
         fs::path current = fs::current_path();
         string rel = fs::relative(fullPath, current).generic_string(); // relative to repo root
         
