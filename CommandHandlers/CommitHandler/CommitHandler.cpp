@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
+#include <fstream>
+
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/UpdateHead/UpdateHead.h"
@@ -50,14 +52,35 @@ void CommitHandler::handleCommit(const string &message)
 
     // Wrap single parent into vector
     vector<string> parents;
+
+    // Parent # 1 : HEAD
     string currentHead = getCurrentCommitHash();
     if (!currentHead.empty()) {
         parents.push_back(currentHead);
     }
+
+    // Parent #2 (if merge): MERGE_HEAD
+    string mergeHeadFile = ".mygit/MERGE_HEAD";
+    if (filesystem::exists(mergeHeadFile)) {
+       ifstream mh(mergeHeadFile);
+       string mergeParent;
+       getline(mh, mergeParent);
+       mh.close();
+
+       if (!mergeParent.empty()) {
+           parents.push_back(mergeParent);
+       }
+    }
+
     Commit commit(tree.getHash(), parents, message, name, email);
 
     commit.save();
     updateHead(commit.getHash());
 
     // cout << "Committed with message: " << message << "\n";
+
+    // Cleanup MERGE_HEAD
+    if (filesystem::exists(mergeHeadFile)) {
+        filesystem::remove(mergeHeadFile);
+    }
 }

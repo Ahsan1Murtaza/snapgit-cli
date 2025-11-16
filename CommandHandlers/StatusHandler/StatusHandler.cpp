@@ -62,17 +62,33 @@ unordered_map<string, string> readWorkingDirectory() {
 // -----------------------------------------------------
 // READ TREE (HEAD FILES)
 // -----------------------------------------------------
-unordered_map<string, string> readTreeFiles(const string& treeHash, const string& basePath = "") {
-    unordered_map<string, string> result;
+unordered_map<string,string> readTreeFiles(const string& treeHash, const string& basePath = "") {
+    unordered_map<string,string> result;
+    if (treeHash.empty()) return result;
 
-    string objectPath = ".mygit/objects/" + treeHash.substr(0, 2) + "/" + treeHash.substr(2);
+    string objectPath = ".mygit/objects/" + treeHash.substr(0,2) + "/" + treeHash.substr(2);
+    if (!fs::exists(objectPath)) {
+        // maybe flat object stored without split
+        objectPath = ".mygit/objects/" + treeHash;
+        if (!fs::exists(objectPath)) return result;
+    }
+
     ifstream in(objectPath);
     if (!in.is_open()) return result;
 
-    string mode, type, hash, name;
-    while (in >> mode >> type >> hash >> name) {
-        string fullPath = basePath.empty() ? name : basePath + "/" + name;
+    string line;
+    while (getline(in, line)) {
+        if (line.size() == 0) continue;
+        istringstream iss(line);
+        string mode, type, hash, name;
+        if (!(iss >> mode >> type >> hash)) continue;
+        // remaining piece is the path (may contain spaces) — read rest of line
+        getline(iss, name);
+        // trim leading spaces in name
+        while (!name.empty() && isspace((unsigned char)name.front())) name.erase(0,1);
+        if (name.empty()) continue;
 
+        string fullPath = basePath.empty() ? name : basePath + "/" + name;
         if (type == "blob") {
             result[fullPath] = hash;
         } else if (type == "tree") {
@@ -80,7 +96,7 @@ unordered_map<string, string> readTreeFiles(const string& treeHash, const string
             result.insert(sub.begin(), sub.end());
         }
     }
-
+    in.close();
     return result;
 }
 
