@@ -11,6 +11,7 @@
 #include "CommandHandlers/ResetHandler/ResetHandler.h"
 #include "CommandHandlers/LogHandler/LogHandler.h"
 #include "CommandHandlers/StatusHandler/StatusHandler.h"
+#include "CommandHandlers/RestoreHandler/RestoreHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -43,6 +44,7 @@ int main(int argc, char* argv[]) {
     ResetHandler resetHandler;     // Create an instance of ResetHandler
     LogHandler logHandler;         // Create an instance of LogHandler
     StatusHandler statusHandler;
+    RestoreHandler restoreHandler;
 
     if (argc < 2) {
         printHelp();
@@ -175,7 +177,11 @@ int main(int argc, char* argv[]) {
     else if (command == "status") {
         statusHandler.handleStatus();
     }
-  
+
+    else if (command == "restore") {
+        string path = argv[2];
+        restoreHandler.handleRestore(path);
+    }
     else {
         cout << "Unknown command: " << command << "\n";
         printHelp();
