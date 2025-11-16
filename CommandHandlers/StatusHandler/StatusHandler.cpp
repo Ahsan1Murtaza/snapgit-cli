@@ -4,6 +4,15 @@
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/GetHeadRef/GetHeadRef.h"
 
+
+// ANSI color codes
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define CYAN    "\033[36m"
+
+
 #include <iostream>
 #include <unordered_map>
 #include <unordered_set>
@@ -132,50 +141,43 @@ void StatusHandler::handleStatus() {
         // UNTRACKED
         if (!inHead && !inIndex && inWork) {
             untracked.push_back(path);
-            continue;
         }
 
         // STAGED DELETION
-        if (inHead && !inIndex) {
+        else if (inHead && !inIndex) {
             stagedDeleted.push_back(path);
-            continue;
         }
 
 
         // MODIFIED STAGED
-        if (inHead && inIndex && i != h) {
+        else if (inHead && inIndex && i != h) {
             stagedModified.push_back(path);
         }
 
         // DELETED NOT STAGED
-        if (inIndex && !inWork) {
-              // File staged (in INDEX) but removed from working directory
-              deletedNotStaged.push_back(path);
-              continue;
-        }
-
-        // DELETED NOT STAGED
-        if (inIndex && inHead && !inWork && i == h) {
+        else if (inIndex && inHead && !inWork && i == h) {
             deletedNotStaged.push_back(path);
-            continue;
         }
 
-
+        // NEW FILE STAGED
+        else if (!inHead && inIndex) {
+            stagedNew.push_back(path);
+            if (inWork && w != i) {
+                modifiedNotStaged.push_back(path);
+            }
+        }
 
         // MODIFIED NOT STAGED
-        if (inIndex && inWork && i != w) {
+        else if (inIndex && inWork && i != w) {
             modifiedNotStaged.push_back(path);
         }
 
+        // DELETED NOT STAGED
+        else if (inIndex && !inWork) {
+            // File staged (in INDEX) but removed from working directory
+            deletedNotStaged.push_back(path);
+        }
 
-        // NEW FILE STAGED
-        if (!inHead && inIndex) {
-           stagedNew.push_back(path);
-
-           if (inWork && w != i)
-              modifiedNotStaged.push_back(path);
-              continue;
-           }
     }
 
        // DEBUGGING PURPOSE ONLY
@@ -202,41 +204,45 @@ void StatusHandler::handleStatus() {
     // PRINT (Git style)
     // -----------------------------------------------------
 
+    string branch = getHeadRef();
+    if (!branch.empty()) {
+        cout << "On branch " << CYAN << branch.substr(branch.find_last_of('/') + 1) << RESET << "\n\n";
+    } else {
+        cout << "HEAD detached\n\n";
+    }
+
+    // Changes to be committed
     if (!stagedNew.empty() || !stagedModified.empty() || !stagedDeleted.empty()) {
-        cout << "Changes to be committed:\n";
+        cout << GREEN << "Changes to be committed:" << RESET << "\n";
+        cout << "  (use \"mygit restore <file>...\" to unstage)\n";
         for (auto &p : stagedNew)      cout << "    new file: " << p << "\n";
         for (auto &p : stagedModified) cout << "    modified: " << p << "\n";
         for (auto &p : stagedDeleted)  cout << "    deleted: " << p << "\n";
         cout << "\n";
     }
 
+    // Changes not staged for commit
     if (!modifiedNotStaged.empty() || !deletedNotStaged.empty()) {
-        cout << "Changes not staged for commit:\n";
+        cout << RED << "Changes not staged for commit:" << RESET << "\n";
+        cout << "  (use \"mygit rm <file>...\" to update what will be committed)\n";
+        cout << "  (use \"mygit restore <file>...\" to discard changes in working directory)\n";
         for (auto &p : modifiedNotStaged) cout << "    modified: " << p << "\n";
         for (auto &p : deletedNotStaged)  cout << "    deleted: " << p << "\n";
         cout << "\n";
     }
 
     if (!untracked.empty()) {
-        cout << "Untracked files:\n";
+        cout << YELLOW << "Untracked files:" << RESET << "\n";
+        cout << "  (use \"mygit add <file>...\" to include in what will be committed)\n";
         for (auto &p : untracked) cout << "    " << p << "\n";
         cout << "\n";
     }
 
-    if (
-        stagedNew.empty() &&
-        stagedModified.empty() &&
-        stagedDeleted.empty() &&
-        modifiedNotStaged.empty() &&
-        deletedNotStaged.empty() &&
-        untracked.empty()
-    ) {
-        string branch = getHeadRef();
-        if (!branch.empty()) {
-            cout << "On branch " << branch.substr(branch.find_last_of('/') + 1) << "\n\n";
-        } else {
-            cout << "HEAD detached\n\n";
-        }
+    // Clean working tree message
+    if (stagedNew.empty() && stagedModified.empty() && stagedDeleted.empty() &&
+        modifiedNotStaged.empty() && deletedNotStaged.empty() && untracked.empty()) {
         cout << "nothing to commit, working tree clean\n\n";
+    } else if (untracked.size() && stagedNew.empty() && stagedModified.empty() && stagedDeleted.empty()) {
+        cout << "nothing added to commit but untracked files present (use \"git add\" to track)\n\n";
     }
 }
