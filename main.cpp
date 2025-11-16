@@ -23,15 +23,19 @@ Displays available commands and their descriptions to the user.
 void printHelp() {
     cout << "SnapGit - A Simple git clone!\n\n";
     cout << "Available commands:\n";
-    cout << "  init       Initialize a new repository\n";
-    cout << "  add        Add a file to the staging area\n";
-    cout << "  commit -m  Commit staged file with a message\n";
-    cout << "  config     Set or display user config\n";
-    cout << "  branch     Create a new branch or list all branches\n";
-    cout << "  checkout   Switch branches or create new branch\n";
-    cout << "  reset      Reset current branch to specified commit\n";
-    cout << "  log        Shows the log of the repository\n";
-    cout << "  help       Show this help message\n";
+    cout << "  init        Initialize a new repository\n";
+    cout << "  add         Add a file to the staging area\n";
+    cout << "  commit -m   Commit staged files with a message\n";
+    cout << "  config      Set or display user config\n";
+    cout << "  branch      Create a new branch or list all branches\n";
+    cout << "  checkout    Switch branches or create new branch\n";
+    cout << "  reset       Reset current branch to a specified commit\n";
+    cout << "  log         Show the commit history\n";
+    cout << "  status      Show the status of files in working directory and staging area\n";
+    cout << "  rm          Remove a file from the staging area (cached) or working directory\n";
+    cout << "  restore     Restore a file from the index to the working directory\n";
+    cout << "  help        Show this help message\n\n";
+    cout << "Use \"mygit <command> --help\" for more information on a specific command.\n";
 }
 
 int main(int argc, char* argv[]) {
@@ -48,12 +52,25 @@ int main(int argc, char* argv[]) {
     RestoreHandler restoreHandler;
     RemoveHandler removeHandler;
 
-    if (argc < 2) {
+     if (argc < 2) {
+         printHelp();
+         return 0;
+     }
+
+     string command = argv[1]; // Get the command from command line arguments
+
+    // GLOBAL help: `mygit help`
+    if (command == "help") {
         printHelp();
         return 0;
     }
 
-    string command = argv[1]; // Get the command from command line arguments
+    // Per-command help: `mygit <cmd> --help`
+    if (argc >= 3 && string(argv[2]) == "--help") {
+        printCommandHelp(command);
+        return 0;
+    }
+
 
     if (command == "init") {
         initHandler.handleInit();
@@ -210,4 +227,99 @@ int main(int argc, char* argv[]) {
     }
 
     return 0;
+}
+
+#define COLOR_RESET   "\033[0m"
+#define COLOR_CMD     "\033[1;36m"   // Cyan bold
+#define COLOR_TITLE   "\033[1;33m"   // Yellow bold
+#define COLOR_TEXT    "\033[0;37m"   // Gray/white
+
+void printCommandHelp(const std::string& command) {
+
+    auto title = [&](const string& t){
+        cout << COLOR_TITLE << t << COLOR_RESET << "\n";
+    };
+
+    auto cmd = [&](const string& t){
+        cout << "  " << COLOR_CMD << t << COLOR_RESET << "\n";
+    };
+
+    auto text = [&](const string& t){
+        cout << "      " << COLOR_TEXT << t << COLOR_RESET << "\n";
+    };
+
+    if (command == "init") {
+        title("Initialize a new repository");
+        cmd("mygit init");
+        text("Creates a .mygit directory and sets up repository structure.");
+    }
+    else if (command == "add") {
+        title("Add files to staging area");
+        cmd("mygit add <file>");
+        text("Adds specified file to the index.");
+        text("Example: mygit add file.txt");
+    }
+    else if (command == "commit") {
+        title("Commit staged changes");
+        cmd("mygit commit -m <message>");
+        text("Creates a new commit with the current staged files.");
+        text("Example: mygit commit -m \"Initial commit\"");
+    }
+    else if (command == "config") {
+        title("Set or view SnapGit config");
+        cmd("mygit config user.name <name>");
+        cmd("mygit config user.email <email>");
+        text("Without arguments, prints current configuration.");
+    }
+    else if (command == "branch") {
+        title("Create or list branches");
+        cmd("mygit branch");
+        text("Lists all branches.");
+        cmd("mygit branch <name>");
+        text("Creates a branch with the given name.");
+    }
+    else if (command == "checkout") {
+        title("Switch branches or restore files");
+        cmd("mygit checkout <branch>");
+        cmd("mygit checkout <commit-hash>");
+        text("Updates working directory to match target.");
+    }
+    else if (command == "reset") {
+        title("Reset current branch");
+        cmd("mygit reset --hard <commit>");
+        text("Moves branch pointer to a specific commit.");
+        text("WARNING: --hard removes working directory changes.");
+    }
+    else if (command == "log") {
+        title("Show commit history");
+        cmd("mygit log");
+        text("Displays commits from newest to oldest.");
+    }
+    else if (command == "status") {
+        title("Show repository status");
+        cmd("mygit status");
+        text("Shows staged, modified, deleted, and untracked files.");
+    }
+    else if (command == "rm") {
+        title("Remove files");
+        cmd("mygit rm <file>");
+        text("Removes file from working directory AND staging area.");
+        cmd("mygit rm --cached <file>");
+        text("Removes file ONLY from staging area.");
+    }
+    else if (command == "restore") {
+        title("Restore working directory files");
+        cmd("mygit restore <file>");
+        text("Restores file from staging/index to working directory.");
+    }
+    else if (command == "help") {
+        title("Help command");
+        cmd("mygit help");
+        text("Shows list of available commands.");
+        cmd("mygit help <command>");
+        text("Shows detailed help for the given command.");
+    }
+    else {
+        cout << COLOR_TITLE << "Unknown command: " << COLOR_CMD << command << COLOR_RESET << "\n";
+    }
 }
