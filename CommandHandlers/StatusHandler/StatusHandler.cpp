@@ -3,6 +3,7 @@
 #include "../../Helper/ReadCommit/ReadCommit.h"
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/GetHeadRef/GetHeadRef.h"
+#include "../../Helper/ReadIndex/ReadIndex.h"
 
 
 // ANSI color codes
@@ -56,22 +57,6 @@ unordered_map<string, string> readWorkingDirectory() {
     return result;
 }
 
-
-// -----------------------------------------------------
-// READ INDEX
-// -----------------------------------------------------
-unordered_map<string, string> readIndex() {
-    unordered_map<string, string> result;
-
-    ifstream in(".mygit/index");
-    if (!in.is_open()) return result;
-
-    string path, hash;
-    while (in >> path >> hash)
-        result[path] = hash;
-
-    return result;
-}
 
 
 // -----------------------------------------------------
