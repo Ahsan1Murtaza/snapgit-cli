@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <filesystem>
+#include <unordered_map>
 
 using namespace std;
 
@@ -18,38 +19,40 @@ This function handles Add Command
     add file to staging area (Index File)
 */
 void AddHandler::handleAdd(const string& filePath) {
-
-    if (!filesystem::exists(filePath)) {
-        cerr << "Error: File " << filePath << " does not exist.\n";
-        return;
-    }
-
     if (!isRepoInitialized()) {
-        cerr << "Error: Repository not initialized. Please run 'init' command first.\n";
+        cerr << "Error: Repository not initialized.\n";
         return;
     }
 
     filesystem::path p(filePath);
-    p = filesystem::weakly_canonical(p); // resolves . , .. and absolute structure if exists
-    filesystem::path current = filesystem::current_path(); // converts absolute path to relative from repo
-    string rel = filesystem::relative(p, current).generic_string();
+    p = filesystem::weakly_canonical(p);
+    string rel = filesystem::relative(p, filesystem::current_path()).generic_string();
+    for (char& c : rel) if (c == '\\') c = '/';
 
-    // ensure consistent slashes and remove leading ./
-    if (rel.rfind("./", 0) == 0) {
-        rel = rel.substr(2);
+    // Read current index
+    unordered_map<string, string> indexMap;
+    ifstream indexIn(".mygit/index");
+    string line;
+    while (getline(indexIn, line)) {
+        istringstream iss(line);
+        string path, hash;
+        iss >> path >> hash;
+        indexMap[path] = hash;
+    }
+    indexIn.close();
+
+    if (filesystem::exists(filePath)) {
+        // File exists → create blob and update index
+        Blob blob(p.string()); // real path
+        blob.save();
+        indexMap[rel] = blob.getHash();
+        cout << "Added " << rel << " in staging area\n";
     }
 
-    cout << "Original Path " << filePath << endl; 
-    cout << "Relative Path " << rel << endl; 
-
-    Blob blob(rel);
-    blob.save();
-
-    // Add to Staging Area
-    ofstream indexFile(".mygit/index", std::ios::app);
-    if (indexFile) {
-        indexFile << rel << " " << blob.getHash() << "\n";
-        indexFile.close();
-        cout << "Added " << rel << " to staging area \n";
+    // Write back index
+    ofstream indexOut(".mygit/index", ios::trunc);
+    for (auto& [path, hash] : indexMap) {
+        indexOut << path << " " << hash << "\n";
     }
+    indexOut.close();
 }
