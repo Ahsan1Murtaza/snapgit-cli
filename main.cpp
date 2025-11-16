@@ -13,6 +13,7 @@
 #include "CommandHandlers/StatusHandler/StatusHandler.h"
 #include "CommandHandlers/RestoreHandler/RestoreHandler.h"
 #include "CommandHandlers/RemoveHandler/RemoveHandler.h"
+#include "CommandHandlers/MergeHandler/MergeHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -146,6 +147,7 @@ int main(int argc, char* argv[]) {
     StatusHandler statusHandler;
     RestoreHandler restoreHandler;
     RemoveHandler removeHandler;
+    MergeHandler mergeHandler;
 
      if (argc < 2) {
          printHelp();
@@ -314,6 +316,17 @@ int main(int argc, char* argv[]) {
         }
 
         removeHandler.handleRemove(file, cached);
+    }
+
+
+    else if (command == "merge") {
+        if (argc < 3) {
+            cerr << "Usage: mygit merge <otherBranch>\n";
+            return 1;
+        }
+        string otherBranch = argv[2];
+        mergeHandler.handleMerge(otherBranch);
+
     }
     else {
         cout << "Unknown command: " << command << "\n";
