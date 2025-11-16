@@ -12,6 +12,7 @@
 #include "CommandHandlers/LogHandler/LogHandler.h"
 #include "CommandHandlers/StatusHandler/StatusHandler.h"
 #include "CommandHandlers/RestoreHandler/RestoreHandler.h"
+#include "CommandHandlers/RemoveHandler/RemoveHandler.h"
 #include "Helper/GetUserInfo/GetUserInfo.h"
 
 using namespace std;
@@ -45,6 +46,7 @@ int main(int argc, char* argv[]) {
     LogHandler logHandler;         // Create an instance of LogHandler
     StatusHandler statusHandler;
     RestoreHandler restoreHandler;
+    RemoveHandler removeHandler;
 
     if (argc < 2) {
         printHelp();
@@ -181,6 +183,25 @@ int main(int argc, char* argv[]) {
     else if (command == "restore") {
         string path = argv[2];
         restoreHandler.handleRestore(path);
+    }
+
+    else if (command == "rm") {
+        if (argc < 3) {
+           cerr << "Usage: mygit rm [--cached] <file>\n";
+           return 1;
+        }
+
+        bool cached = false;
+        string file;
+
+        if (string(argv[2]) == "--cached" && argc >= 4) {
+                cached = true;
+                file = argv[3];
+        } else {
+                file = argv[2];
+        }
+
+        removeHandler.handleRemove(file, cached);
     }
     else {
         cout << "Unknown command: " << command << "\n";
