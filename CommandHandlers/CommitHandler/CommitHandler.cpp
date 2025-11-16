@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
+#include <fstream>
+
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/UpdateHead/UpdateHead.h"
@@ -59,7 +61,7 @@ void CommitHandler::handleCommit(const string &message)
 
     // Parent #2 (if merge): MERGE_HEAD
     string mergeHeadFile = ".mygit/MERGE_HEAD";
-    if (fs::exists(mergeHeadFile)) {
+    if (filesystem::exists(mergeHeadFile)) {
        ifstream mh(mergeHeadFile);
        string mergeParent;
        getline(mh, mergeParent);
@@ -78,7 +80,7 @@ void CommitHandler::handleCommit(const string &message)
     // cout << "Committed with message: " << message << "\n";
 
     // Cleanup MERGE_HEAD
-    if (fs::exists(mergeHeadFile)) {
-        fs::remove(mergeHeadFile);
+    if (filesystem::exists(mergeHeadFile)) {
+        filesystem::remove(mergeHeadFile);
     }
 }
