@@ -16,7 +16,7 @@ Call sha1 on the blob data to get the hash.
 */
 Blob::Blob(const string& filePath) : Object("blob"), filePath(filePath) {
     // Read file content
-    ifstream file(filePath);
+    ifstream file(filePath, ios::binary);
     if (file) {
         stringstream buffer;
         buffer << file.rdbuf();
