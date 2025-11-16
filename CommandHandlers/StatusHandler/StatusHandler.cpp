@@ -2,6 +2,7 @@
 #include "../../Helper/Hash/Hash.h"
 #include "../../Helper/ReadCommit/ReadCommit.h"
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
+#include "../../Helper/GetHeadRef/GetHeadRef.h"
 
 #include <iostream>
 #include <unordered_map>
@@ -16,16 +17,17 @@ using namespace std;
 namespace fs = std::filesystem;
 
 
+// -----------------------------------------------------
+// READ WORKING DIRECTORY (ignore .mygit)
+// -----------------------------------------------------
 unordered_map<string, string> readWorkingDirectory() {
     unordered_map<string, string> result;
 
     for (auto& entry : fs::recursive_directory_iterator(".")) {
         if (!entry.is_regular_file()) continue;
 
-        // Ignore .mygit
         if (entry.path().string().find(".mygit") != string::npos) continue;
 
-        // Read file contents
         ifstream file(entry.path(), ios::binary);
         if (!file) continue;
 
@@ -36,7 +38,6 @@ unordered_map<string, string> readWorkingDirectory() {
         string blobData = "blob " + to_string(content.size()) + "\0" + content;
         string hash = sha1(blobData);
 
-        // NORMALIZE path for index match (relative to repo root, use forward slashes)
         fs::path relPath = fs::relative(entry.path(), fs::current_path());
         string rel = relPath.generic_string();
 
@@ -46,6 +47,10 @@ unordered_map<string, string> readWorkingDirectory() {
     return result;
 }
 
+
+// -----------------------------------------------------
+// READ INDEX
+// -----------------------------------------------------
 unordered_map<string, string> readIndex() {
     unordered_map<string, string> result;
 
@@ -53,42 +58,47 @@ unordered_map<string, string> readIndex() {
     if (!in.is_open()) return result;
 
     string path, hash;
-    while (in >> path >> hash) {
+    while (in >> path >> hash)
         result[path] = hash;
-    }
 
     return result;
 }
 
+
+// -----------------------------------------------------
+// READ TREE (HEAD FILES)
+// -----------------------------------------------------
 unordered_map<string, string> readTreeFiles(const string& treeHash, const string& basePath = "") {
     unordered_map<string, string> result;
 
-    string filePath = ".mygit/objects/" + treeHash.substr(0, 2) + "/" + treeHash.substr(2);
-
-    ifstream in(filePath);
+    string objectPath = ".mygit/objects/" + treeHash.substr(0, 2) + "/" + treeHash.substr(2);
+    ifstream in(objectPath);
     if (!in.is_open()) return result;
 
     string mode, type, hash, name;
     while (in >> mode >> type >> hash >> name) {
         string fullPath = basePath.empty() ? name : basePath + "/" + name;
+
         if (type == "blob") {
             result[fullPath] = hash;
-        }
-        else if (type == "tree") {
+        } else if (type == "tree") {
             auto sub = readTreeFiles(hash, fullPath);
             result.insert(sub.begin(), sub.end());
         }
     }
+
     return result;
 }
 
-void StatusHandler::handleStatus() {
 
-    unordered_map<string, string> workingDirectoryFiles = readWorkingDirectory();
-    unordered_map<string, string> indexFiles = readIndex();
+// -----------------------------------------------------
+// STATUS HANDLER
+// -----------------------------------------------------
+void StatusHandler::handleStatus() {
+    auto work = readWorkingDirectory();
+    auto index = readIndex();
 
     unordered_map<string, string> headFiles;
-
     string headHash = getCurrentCommitHash();
 
     if (!headHash.empty()) {
@@ -102,93 +112,95 @@ void StatusHandler::handleStatus() {
     vector<string> stagedModified;
     vector<string> stagedDeleted;
     vector<string> deletedNotStaged;
-    vector<string> unmerged; // placeholder for merges
 
     unordered_set<string> allPaths;
 
-    for (auto& [p, _] : headFiles) allPaths.insert(p);
-    for (auto& [p, _] : indexFiles) allPaths.insert(p);
-    for (auto& [p, _] : workingDirectoryFiles) allPaths.insert(p);
+    for (auto& [p, _] : headFiles)  allPaths.insert(p);
+    for (auto& [p, _] : index)      allPaths.insert(p);
+    for (auto& [p, _] : work)       allPaths.insert(p);
+
 
     for (auto& path : allPaths) {
+        bool inHead  = headFiles.count(path);
+        bool inIndex = index.count(path);
+        bool inWork  = work.count(path);
 
-        bool inHead = headFiles.count(path) > 0;
-        bool inIndex = indexFiles.count(path) > 0;
-        bool inWork = workingDirectoryFiles.count(path) > 0;
+        string h = inHead  ? headFiles[path] : "";
+        string i = inIndex ? index[path]     : "";
+        string w = inWork  ? work[path]      : "";
 
-        string hHash = inHead ? headFiles[path] : "";
-        string iHash = inIndex ? indexFiles[path] : "";
-        string wHash = inWork ? workingDirectoryFiles[path] : "";
-
-        cout << "PATH: " << path << endl;
-        cout << "INDEX HASH: " << iHash << "\n";
-        cout << "HEAD HASH: " << hHash << "\n";
-        cout << "WORKDIR HASH: " << wHash << "\n";
-
-
-        // 1) Untracked: present in work, not in index and not in HEAD
+        // UNTRACKED
         if (!inHead && !inIndex && inWork) {
             untracked.push_back(path);
             continue;
         }
 
-        // 2) Staged deletion: present in HEAD but missing from INDEX
-        // (user removed it and staged the removal)
+        // STAGED DELETION
         if (inHead && !inIndex) {
             stagedDeleted.push_back(path);
-
-            // If file also exists in working dir and differs from HEAD, show as modified-not-staged too
-            if (inWork && wHash != hHash) {
-                modifiedNotStaged.push_back(path);
-            }
             continue;
         }
 
-        // 3) Staged new file: not in HEAD, present in INDEX
+
+        // MODIFIED STAGED
+        if (inHead && inIndex && i != h) {
+            stagedModified.push_back(path);
+        }
+
+        // DELETED NOT STAGED
+        if (inIndex && !inWork) {
+              // File staged (in INDEX) but removed from working directory
+              deletedNotStaged.push_back(path);
+              continue;
+        }
+
+        // DELETED NOT STAGED
+        if (inIndex && inHead && !inWork && i == h) {
+            deletedNotStaged.push_back(path);
+            continue;
+        }
+
+
+
+        // MODIFIED NOT STAGED
+        if (inIndex && inWork && i != w) {
+            modifiedNotStaged.push_back(path);
+        }
+
+
+        // NEW FILE STAGED
         if (!inHead && inIndex) {
-            stagedNew.push_back(path);
+           stagedNew.push_back(path);
 
-            // if also changed in working dir after staging, mark modified-not-staged
-            if (inWork && iHash != wHash) {
-                modifiedNotStaged.push_back(path);
-            }
-            continue;
-        }
-
-        // 4) Path present in both HEAD and INDEX
-        if (inHead && inIndex) {
-            // 4a) Staged modification (INDEX differs from HEAD)
-            if (iHash != hHash) {
-                stagedModified.push_back(path);
-            }
-
-            // 4b) Deleted from working directory but still in index -> deleted not staged
-            if (!inWork) {
-                // If index equals head it means user deleted from work but didn't stage the deletion
-                // If index != head, then index already staged something — treat as deletedNotStaged only when index==head
-                if (iHash == hHash) {
-                    deletedNotStaged.push_back(path);
-                } else {
-                    // index != head (something staged). If work missing, user may have deleted again; treat as modifiedNotStaged?
-                    // We'll show modifiedNotStaged if work was modified (not present => deletion), but since index differs, ignore here.
-                }
-            } else {
-                // 4c) File exists in working dir: if working copy differs from index -> modified but not staged
-                if (iHash != wHash) {
-                    modifiedNotStaged.push_back(path);
-                }
-            }
-
-            // If both staged (index != head) and also modified in work (work != index),
-            // this path will be in both stagedModified (or stagedNew) and modifiedNotStaged, which is correct.
-            continue;
-        }
-
-        // 5) Path in index and not in HEAD, but not handled earlier — already covered above.
-        // 6) Path in work only was handled earlier (untracked).
+           if (inWork && w != i)
+              modifiedNotStaged.push_back(path);
+              continue;
+           }
     }
 
-    // Print like git
+       // DEBUGGING PURPOSE ONLY
+//    // Print HEAD
+//    cout << "=== HEAD Files ===\n";
+//    for (auto& [path, hash] : headFiles) {
+//        cout << path << " : " << hash << "\n";
+//    }
+//
+//    // Print INDEX
+//    cout << "=== INDEX Files ===\n";
+//    for (auto& [path, hash] : index) {
+//        cout << path << " : " << hash << "\n";
+//    }
+//
+//    // Print WORKDIR
+//    cout << "=== WORKDIR Files ===\n";
+//    for (auto& [path, hash] : work) {
+//        cout << path << " : " << hash << "\n";
+//    }
+
+
+    // -----------------------------------------------------
+    // PRINT (Git style)
+    // -----------------------------------------------------
 
     if (!stagedNew.empty() || !stagedModified.empty() || !stagedDeleted.empty()) {
         cout << "Changes to be committed:\n";
@@ -205,26 +217,26 @@ void StatusHandler::handleStatus() {
         cout << "\n";
     }
 
-    if (!unmerged.empty()) {
-        cout << "Unmerged paths:\n";
-        for (auto &p : unmerged) cout << "    both modified: " << p << "\n";
-        cout << "\n";
-    }
-
     if (!untracked.empty()) {
         cout << "Untracked files:\n";
         for (auto &p : untracked) cout << "    " << p << "\n";
         cout << "\n";
     }
 
-    if (stagedNew.empty() &&
-            stagedModified.empty() &&
-            stagedDeleted.empty() &&
-            modifiedNotStaged.empty() &&
-            deletedNotStaged.empty() &&
-            unmerged.empty() &&
-            untracked.empty()
-        ) {
-            cout << "nothing to commit, working tree clean\n";
+    if (
+        stagedNew.empty() &&
+        stagedModified.empty() &&
+        stagedDeleted.empty() &&
+        modifiedNotStaged.empty() &&
+        deletedNotStaged.empty() &&
+        untracked.empty()
+    ) {
+        string branch = getHeadRef();
+        if (!branch.empty()) {
+            cout << "On branch " << branch.substr(branch.find_last_of('/') + 1) << "\n\n";
+        } else {
+            cout << "HEAD detached\n\n";
         }
+        cout << "nothing to commit, working tree clean\n\n";
+    }
 }
