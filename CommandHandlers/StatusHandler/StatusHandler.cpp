@@ -199,28 +199,28 @@ void StatusHandler::handleStatus() {
     // Changes to be committed
     if (!stagedNew.empty() || !stagedModified.empty() || !stagedDeleted.empty()) {
         cout << GREEN << "Changes to be committed:" << RESET << "\n";
-        cout << "  (use \"mygit restore <file>...\" to unstage)\n";
+        cout << "  (use \"mygit restore <file>...\" to unstage)\n\n";
         for (auto &p : stagedNew)      cout << "    new file: " << p << "\n";
         for (auto &p : stagedModified) cout << "    modified: " << p << "\n";
         for (auto &p : stagedDeleted)  cout << "    deleted: " << p << "\n";
-        cout << "\n";
+        cout << "\n\n";
     }
 
     // Changes not staged for commit
     if (!modifiedNotStaged.empty() || !deletedNotStaged.empty()) {
         cout << RED << "Changes not staged for commit:" << RESET << "\n";
-        cout << "  (use \"mygit rm <file>...\" to update what will be committed)\n";
-        cout << "  (use \"mygit restore <file>...\" to discard changes in working directory)\n";
+        cout << "  (use \"mygit rm <file> or mygit rm --cached <file>\" to update what will be committed)\n";
+        cout << "  (use \"mygit restore <file>...\" to discard changes in working directory)\n\n";
         for (auto &p : modifiedNotStaged) cout << "    modified: " << p << "\n";
         for (auto &p : deletedNotStaged)  cout << "    deleted: " << p << "\n";
-        cout << "\n";
+        cout << "\n\n";
     }
 
     if (!untracked.empty()) {
         cout << YELLOW << "Untracked files:" << RESET << "\n";
-        cout << "  (use \"mygit add <file>...\" to include in what will be committed)\n";
+        cout << "  (use \"mygit add <file>...\" to include in what will be committed)\n\n";
         for (auto &p : untracked) cout << "    " << p << "\n";
-        cout << "\n";
+        cout << "\n\n";
     }
 
     // Clean working tree message
