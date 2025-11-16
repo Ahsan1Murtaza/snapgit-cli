@@ -30,13 +30,30 @@ void RestoreHandler::handleRestore(const string& filePath) {
     }
 
     ifstream in(objFile, ios::binary);
+    if (!in) {
+        cerr << "Error: Could not open object file " << objFile << "\n";
+            return;
+    }
+
     string content((istreambuf_iterator<char>(in)), istreambuf_iterator<char>());
     size_t pos = content.find('\0');
     if (pos != string::npos) content = content.substr(pos + 1);
 
-    fs::create_directories(fs::path(filePath).parent_path());
-    ofstream out(filePath, ios::binary);
-    out.write(content.data(), content.size());
+    // Ensure parent directories exist (skip if root-level file)
+        fs::path filePathObj(filePath);
+        fs::path parentDir = filePathObj.parent_path();
+        if (!parentDir.empty()) {
+            fs::create_directories(parentDir);
+        }
 
-    cout << "Restored " << filePath << " from index\n";
+        // Write content to working directory
+        ofstream out(filePathObj, ios::binary);
+        if (!out) {
+            cerr << "Error: Could not write to file " << filePath << "\n";
+            return;
+        }
+        out.write(content.data(), content.size());
+        out.close();
+
+        cout << "Restored " << filePath << " from index\n";
 }
