@@ -35,6 +35,7 @@ void printHelp() {
     cout << "  status      Show the status of files in working directory and staging area\n";
     cout << "  rm          Remove a file from the staging area (cached) or working directory\n";
     cout << "  restore     Restore a file from the index to the working directory\n";
+    cout << "  merge       Merge branches\n";
     cout << "  help        Show this help message\n\n";
     cout << "Use \"mygit <command> --help\" for more information on a specific command.\n";
 }
@@ -121,6 +122,11 @@ void printCommandHelp(const std::string& command) {
         title("Restore working directory files");
         cmd("mygit restore <file>");
         text("Restores file from staging/index to working directory.");
+    }
+    else if (command == "merge") {
+        title("Merge branches");
+        cmd("mygit merge <otherBranch>");
+        text("Merges specified branch into current branch.");
     }
     else if (command == "help") {
         title("Help command");
