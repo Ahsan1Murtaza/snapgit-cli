@@ -62,6 +62,8 @@ After building, run the CLI commands, for example:
 **Commands (high level)**
 - **`init`**: create `.mygit` folder and initial metadata.
 - **`add`**: stage files into index.
+  - Supports `mygit add .` to stage recursively.
+  - Honors ignore rules from `.mygitignore` during recursive staging.
 - **`commit`**: create commit object and update refs.
 - **`branch`**: create/list branches under `.mygit/refs/heads`.
 - **`checkout`**: switch branch or restore tree from commit.

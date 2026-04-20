@@ -5,6 +5,7 @@
 #include "../../Helper/GetHeadRef/GetHeadRef.h"
 #include "../../Helper/ReadIndex/ReadIndex.h"
 #include "../../Helper/ReadTree/ReadTree.h"
+#include "../../Helper/Ignore.h"
 
 
 #include <iostream>
@@ -23,16 +24,38 @@ namespace fs = std::filesystem;
 // -----------------------------------------------------
 // READ WORKING DIRECTORY (ignore .mygit)
 // -----------------------------------------------------
-unordered_map<string, string> readWorkingDirectory() {
+unordered_map<string, string> readWorkingDirectory(const vector<string>& ignorePatterns) {
     unordered_map<string, string> result;
 
-    for (auto& entry : fs::recursive_directory_iterator(".")) {
-        if (!entry.is_regular_file()) continue;
+    fs::recursive_directory_iterator it("."), end;
+    while (it != end) {
+        const fs::directory_entry& entry = *it;
+        fs::path relPath = fs::relative(entry.path(), fs::current_path());
+        string rel = relPath.generic_string();
 
-        if (entry.path().string().find(".mygit") != string::npos) continue;
+        if (entry.is_directory()) {
+            if (rel == ".mygit" || rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
+                it.disable_recursion_pending();
+            }
+            ++it;
+            continue;
+        }
+
+        if (!entry.is_regular_file()) {
+            ++it;
+            continue;
+        }
+
+        if (rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
+            ++it;
+            continue;
+        }
 
         ifstream file(entry.path(), ios::binary);
-        if (!file) continue;
+        if (!file) {
+            ++it;
+            continue;
+        }
 
         stringstream buffer;
         buffer << file.rdbuf();
@@ -41,10 +64,8 @@ unordered_map<string, string> readWorkingDirectory() {
         string blobData = "blob " + to_string(content.size()) + "\0" + content;
         string hash = sha1(blobData);
 
-        fs::path relPath = fs::relative(entry.path(), fs::current_path());
-        string rel = relPath.generic_string();
-
         result[rel] = hash;
+        ++it;
     }
 
     return result;
@@ -58,7 +79,8 @@ unordered_map<string, string> readWorkingDirectory() {
 // STATUS HANDLER
 // -----------------------------------------------------
 void StatusHandler::handleStatus() {
-    auto work = readWorkingDirectory();
+    auto ignorePatterns = readIgnorePatterns();
+    auto work = readWorkingDirectory(ignorePatterns);
     auto index = readIndex();
 
     unordered_map<string, string> headFiles;

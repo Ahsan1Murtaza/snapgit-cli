@@ -62,7 +62,9 @@ void printCommandHelp(const std::string& command) {
     else if (command == "add") {
         title("Add files to staging area");
         cmd("mygit add <file>");
-        text("Adds specified file to the index.");
+        cmd("mygit add .");
+        text("Adds specified file or all files recursively to the index.");
+        text("Reads ignore rules from .mygitignore when staging recursively.");
         text("Example: mygit add file.txt");
     }
     else if (command == "commit") {
