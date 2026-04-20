@@ -117,8 +117,15 @@ void AddHandler::handleAdd(const string& filePath) {
         }
 
         Blob blob(absFilePath.string());
+        const string newHash = blob.getHash();
+
+        auto it = indexMap.find(rel);
+        if (it != indexMap.end() && it->second == newHash) {
+            continue;
+        }
+
         blob.save();
-        indexMap[rel] = blob.getHash();
+        indexMap[rel] = newHash;
         cout << "Added " << rel << " in staging area\n";
     }
 
