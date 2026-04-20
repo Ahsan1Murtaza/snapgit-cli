@@ -4,14 +4,7 @@
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/GetHeadRef/GetHeadRef.h"
 #include "../../Helper/ReadIndex/ReadIndex.h"
-
-
-// ANSI color codes
-#define RESET   "\033[0m"
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define CYAN    "\033[36m"
+#include "../../Helper/ReadTree/ReadTree.h"
 
 
 #include <iostream>
@@ -59,46 +52,6 @@ unordered_map<string, string> readWorkingDirectory() {
 
 
 
-// -----------------------------------------------------
-// READ TREE (HEAD FILES)
-// -----------------------------------------------------
-unordered_map<string,string> readTreeFiles(const string& treeHash, const string& basePath = "") {
-    unordered_map<string,string> result;
-    if (treeHash.empty()) return result;
-
-    string objectPath = ".mygit/objects/" + treeHash.substr(0,2) + "/" + treeHash.substr(2);
-    if (!fs::exists(objectPath)) {
-        // maybe flat object stored without split
-        objectPath = ".mygit/objects/" + treeHash;
-        if (!fs::exists(objectPath)) return result;
-    }
-
-    ifstream in(objectPath);
-    if (!in.is_open()) return result;
-
-    string line;
-    while (getline(in, line)) {
-        if (line.size() == 0) continue;
-        istringstream iss(line);
-        string mode, type, hash, name;
-        if (!(iss >> mode >> type >> hash)) continue;
-        // remaining piece is the path (may contain spaces) — read rest of line
-        getline(iss, name);
-        // trim leading spaces in name
-        while (!name.empty() && isspace((unsigned char)name.front())) name.erase(0,1);
-        if (name.empty()) continue;
-
-        string fullPath = basePath.empty() ? name : basePath + "/" + name;
-        if (type == "blob") {
-            result[fullPath] = hash;
-        } else if (type == "tree") {
-            auto sub = readTreeFiles(hash, fullPath);
-            result.insert(sub.begin(), sub.end());
-        }
-    }
-    in.close();
-    return result;
-}
 
 
 // -----------------------------------------------------
@@ -207,14 +160,14 @@ void StatusHandler::handleStatus() {
 
     string branch = getHeadRef();
     if (!branch.empty()) {
-        cout << "On branch " << CYAN << branch.substr(branch.find_last_of('/') + 1) << RESET << "\n\n";
+        cout << "On branch " << branch.substr(branch.find_last_of('/') + 1) << "\n\n";
     } else {
         cout << "HEAD detached\n\n";
     }
 
     // Changes to be committed
     if (!stagedNew.empty() || !stagedModified.empty() || !stagedDeleted.empty()) {
-        cout << GREEN << "Changes to be committed:" << RESET << "\n";
+        cout << "Changes to be committed:\n";
         cout << "  (use \"mygit restore <file>...\" to unstage)\n\n";
         for (auto &p : stagedNew)      cout << "    new file: " << p << "\n";
         for (auto &p : stagedModified) cout << "    modified: " << p << "\n";
@@ -224,7 +177,7 @@ void StatusHandler::handleStatus() {
 
     // Changes not staged for commit
     if (!modifiedNotStaged.empty() || !deletedNotStaged.empty()) {
-        cout << RED << "Changes not staged for commit:" << RESET << "\n";
+        cout << "Changes not staged for commit:\n";
         cout << "  (use \"mygit rm <file> or mygit rm --cached <file>\" to update what will be committed)\n";
         cout << "  (use \"mygit restore <file>...\" to discard changes in working directory)\n\n";
         for (auto &p : modifiedNotStaged) cout << "    modified: " << p << "\n";
@@ -233,7 +186,7 @@ void StatusHandler::handleStatus() {
     }
 
     if (!untracked.empty()) {
-        cout << YELLOW << "Untracked files:" << RESET << "\n";
+        cout << "Untracked files:\n";
         cout << "  (use \"mygit add <file>...\" to include in what will be committed)\n\n";
         for (auto &p : untracked) cout << "    " << p << "\n";
         cout << "\n\n";

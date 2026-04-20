@@ -11,6 +11,7 @@
 #include "../../Helper/Hash/Hash.h"
 #include "../../Helper/GetUserInfo/GetUserInfo.h"
 #include "../../Helper/UpdateHead/UpdateHead.h"
+#include "../../Helper/ReadTree/ReadTree.h"
 
 #include <filesystem>
 #include <fstream>
@@ -23,48 +24,6 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-/*
-  Helper: readTreeFiles
-  Given a tree object hash, recursively return a map: path -> blobHash
-  Expects tree object format lines: "<mode> <type> <hash> <path>"
-*/
-static unordered_map<string,string> readTreeFilesSafe(const string& treeHash, const string& basePath = "") {
-    unordered_map<string,string> result;
-    if (treeHash.empty()) return result;
-
-    string objectPath = ".mygit/objects/" + treeHash.substr(0,2) + "/" + treeHash.substr(2);
-    if (!fs::exists(objectPath)) {
-        // maybe flat object stored without split
-        objectPath = ".mygit/objects/" + treeHash;
-        if (!fs::exists(objectPath)) return result;
-    }
-
-    ifstream in(objectPath);
-    if (!in.is_open()) return result;
-
-    string line;
-    while (getline(in, line)) {
-        if (line.size() == 0) continue;
-        istringstream iss(line);
-        string mode, type, hash, name;
-        if (!(iss >> mode >> type >> hash)) continue;
-        // remaining piece is the path (may contain spaces) — read rest of line
-        getline(iss, name);
-        // trim leading spaces in name
-        while (!name.empty() && isspace((unsigned char)name.front())) name.erase(0,1);
-        if (name.empty()) continue;
-
-        string fullPath = basePath.empty() ? name : basePath + "/" + name;
-        if (type == "blob") {
-            result[fullPath] = hash;
-        } else if (type == "tree") {
-            auto sub = readTreeFilesSafe(hash, fullPath);
-            result.insert(sub.begin(), sub.end());
-        }
-    }
-    in.close();
-    return result;
-}
 
 /*
   Helper: findCommonAncestor (simple walk up parents from A, then climb B until found)
@@ -145,7 +104,7 @@ static void writeConflictMarkers(const string& path, const string& currentHash, 
   Write index in your repository format: "path hash"
 */
 static void updateIndexFromTree(const string& treeHash) {
-    auto files = readTreeFilesSafe(treeHash);
+    auto files = readTreeFiles(treeHash);
     ofstream idx(".mygit/index", ios::trunc);
     if (!idx.is_open()) {
         cerr << "Error: Unable to open .mygit/index for writing\n";
@@ -203,9 +162,9 @@ void MergeHandler::handleMerge(const string& otherBranch) {
     string othTree  = othCommit.treeHash;
 
     // read file maps: path -> blobHash
-    auto baseFiles = baseTree.empty() ? unordered_map<string,string>() : readTreeFilesSafe(baseTree);
-    auto curFiles  = curTree.empty() ? unordered_map<string,string>() : readTreeFilesSafe(curTree);
-    auto othFiles  = othTree.empty() ? unordered_map<string,string>() : readTreeFilesSafe(othTree);
+    auto baseFiles = baseTree.empty() ? unordered_map<string,string>() : readTreeFiles(baseTree);
+    auto curFiles  = curTree.empty() ? unordered_map<string,string>() : readTreeFiles(curTree);
+    auto othFiles  = othTree.empty() ? unordered_map<string,string>() : readTreeFiles(othTree);
 
     // collect all paths
     unordered_set<string> allPaths;

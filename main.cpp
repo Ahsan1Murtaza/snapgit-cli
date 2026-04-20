@@ -40,23 +40,18 @@ void printHelp() {
     cout << "Use \"mygit <command> --help\" for more information on a specific command.\n";
 }
 
-#define COLOR_RESET   "\033[0m"
-#define COLOR_CMD     "\033[1;36m"   // Cyan bold
-#define COLOR_TITLE   "\033[1;33m"   // Yellow bold
-#define COLOR_TEXT    "\033[0;37m"   // Gray/white
-
 void printCommandHelp(const std::string& command) {
 
     auto title = [&](const string& t){
-        cout << COLOR_TITLE << t << COLOR_RESET << "\n";
+        cout << t << "\n";
     };
 
     auto cmd = [&](const string& t){
-        cout << "  " << COLOR_CMD << t << COLOR_RESET << "\n";
+        cout << "  " << t << "\n";
     };
 
     auto text = [&](const string& t){
-        cout << "      " << COLOR_TEXT << t << COLOR_RESET << "\n";
+        cout << "      " << t << "\n";
     };
 
     if (command == "init") {
@@ -136,7 +131,7 @@ void printCommandHelp(const std::string& command) {
         text("Shows detailed help for the given command.");
     }
     else {
-        cout << COLOR_TITLE << "Unknown command: " << COLOR_CMD << command << COLOR_RESET << "\n";
+        cout << "Unknown command: " << command << "\n";
     }
 }
 
