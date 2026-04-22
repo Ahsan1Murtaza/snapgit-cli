@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for SortIndex.
+
 #include "SortIndex.h"
 
 #include <fstream>
@@ -11,6 +14,10 @@ using namespace std;
 /* Function to sort the index file lexicographically
 Reads the index file, sorts the entries, and writes them back.
 */
+/**
+ * @brief Performs sort index file.
+ * @param indexPath Path to the index file.
+ */
 void sortIndexFile(const string& indexPath) {
     ifstream indexFile(indexPath);
 

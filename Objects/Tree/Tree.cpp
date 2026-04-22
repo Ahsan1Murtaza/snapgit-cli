@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for Tree.
+
 #include "Tree.h"
 #include "../../Helper/SortIndex/SortIndex.h"
 #include <iostream>
@@ -11,10 +14,17 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+/**
+ * @brief Constructs a Object instance.
+ * @return Requested value produced by this function.
+ */
 Tree::Tree() : Object("tree") {
     // Constructor implementation
 }
 
+/**
+ * @brief Destroys the object and releases owned resources.
+ */
 Tree::~Tree() {
     for (auto& pair : subTrees) {
         delete pair.second; // clean up memory for each subtree
@@ -25,6 +35,11 @@ Tree::~Tree() {
 Add file in a tree
 Stored in map (filePath, hash)
 */
+/**
+ * @brief Performs add blob.
+ * @param filePath Path to the target file relative to the repository root.
+ * @param blobHash Hash of the blob object.
+ */
 void Tree::addBlob(const string& filePath, const string& blobHash) {
     blobs[filePath] = blobHash;
 }
@@ -32,6 +47,11 @@ void Tree::addBlob(const string& filePath, const string& blobHash) {
 /*
 This function creates a Tree or returns it if already created
 */
+/**
+ * @brief Returns or create sub tree.
+ * @param folderName Folder name for the subtree node.
+ * @return Pointer to the requested object; may be null when unavailable.
+ */
 Tree* Tree::getOrCreateSubTree(const string& folderName) {
     if (subTrees.find(folderName) == subTrees.end()) {
         subTrees[folderName] = new Tree();
@@ -43,6 +63,10 @@ Tree* Tree::getOrCreateSubTree(const string& folderName) {
 /*
 Scans the Index file and create a in-memory tree
 */
+/**
+ * @brief Performs build from index.
+ * @param indexPath Path to the index file.
+ */
 void Tree::buildFromIndex(const std::string& indexPath) {
 
     sortIndexFile(indexPath); // Ensure index file is sorted
@@ -95,6 +119,9 @@ Just For Development Purpose
 /*
 Save the in-memory tree into Objects folder recursively
 */
+/**
+ * @brief Performs save.
+ */
 void Tree::save() {
     
     ostringstream contentStream;

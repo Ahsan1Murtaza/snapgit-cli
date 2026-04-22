@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for Hash.
+
 #include "Hash.h"
 #include <iomanip> // for std::setw and std::setfill
 #include <sstream> 
@@ -14,6 +17,11 @@ Returns:
 Total length of SHA-1 hash is 40 characters (160 bits)
 20 char is converted to 40 char hex string
 */
+/**
+ * @brief Performs sha1.
+ * @param data Input content to hash.
+ * @return Requested string value.
+ */
 std::string sha1(const std::string& data) {
     unsigned char hash[SHA_DIGEST_LENGTH]; // SHA_DIGEST_LENGTH is 20 bytes
 

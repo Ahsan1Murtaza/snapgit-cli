@@ -1,17 +1,14 @@
+// SPDX-License-Identifier: MIT
+// Implementation for StatusHandler.
+
 #include "StatusHandler.h"
 #include "../../Helper/Hash/Hash.h"
 #include "../../Helper/ReadCommit/ReadCommit.h"
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h"
 #include "../../Helper/GetHeadRef/GetHeadRef.h"
 #include "../../Helper/ReadIndex/ReadIndex.h"
-
-
-// ANSI color codes
-#define RESET   "\033[0m"
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define CYAN    "\033[36m"
+#include "../../Helper/ReadTree/ReadTree.h"
+#include "../../Helper/Ignore.h"
 
 
 #include <iostream>
@@ -30,16 +27,43 @@ namespace fs = std::filesystem;
 // -----------------------------------------------------
 // READ WORKING DIRECTORY (ignore .mygit)
 // -----------------------------------------------------
-unordered_map<string, string> readWorkingDirectory() {
+/**
+ * @brief Reads working directory from repository storage.
+ * @param ignorePatterns Input value for `ignorePatterns`.
+ * @return Requested string value.
+ */
+unordered_map<string, string> readWorkingDirectory(const vector<string>& ignorePatterns) {
     unordered_map<string, string> result;
 
-    for (auto& entry : fs::recursive_directory_iterator(".")) {
-        if (!entry.is_regular_file()) continue;
+    fs::recursive_directory_iterator it("."), end;
+    while (it != end) {
+        const fs::directory_entry& entry = *it;
+        fs::path relPath = fs::relative(entry.path(), fs::current_path());
+        string rel = relPath.generic_string();
 
-        if (entry.path().string().find(".mygit") != string::npos) continue;
+        if (entry.is_directory()) {
+            if (rel == ".mygit" || rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
+                it.disable_recursion_pending();
+            }
+            ++it;
+            continue;
+        }
+
+        if (!entry.is_regular_file()) {
+            ++it;
+            continue;
+        }
+
+        if (rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
+            ++it;
+            continue;
+        }
 
         ifstream file(entry.path(), ios::binary);
-        if (!file) continue;
+        if (!file) {
+            ++it;
+            continue;
+        }
 
         stringstream buffer;
         buffer << file.rdbuf();
@@ -48,10 +72,8 @@ unordered_map<string, string> readWorkingDirectory() {
         string blobData = "blob " + to_string(content.size()) + "\0" + content;
         string hash = sha1(blobData);
 
-        fs::path relPath = fs::relative(entry.path(), fs::current_path());
-        string rel = relPath.generic_string();
-
         result[rel] = hash;
+        ++it;
     }
 
     return result;
@@ -59,53 +81,17 @@ unordered_map<string, string> readWorkingDirectory() {
 
 
 
-// -----------------------------------------------------
-// READ TREE (HEAD FILES)
-// -----------------------------------------------------
-unordered_map<string,string> readTreeFiles(const string& treeHash, const string& basePath = "") {
-    unordered_map<string,string> result;
-    if (treeHash.empty()) return result;
-
-    string objectPath = ".mygit/objects/" + treeHash.substr(0,2) + "/" + treeHash.substr(2);
-    if (!fs::exists(objectPath)) {
-        // maybe flat object stored without split
-        objectPath = ".mygit/objects/" + treeHash;
-        if (!fs::exists(objectPath)) return result;
-    }
-
-    ifstream in(objectPath);
-    if (!in.is_open()) return result;
-
-    string line;
-    while (getline(in, line)) {
-        if (line.size() == 0) continue;
-        istringstream iss(line);
-        string mode, type, hash, name;
-        if (!(iss >> mode >> type >> hash)) continue;
-        // remaining piece is the path (may contain spaces) — read rest of line
-        getline(iss, name);
-        // trim leading spaces in name
-        while (!name.empty() && isspace((unsigned char)name.front())) name.erase(0,1);
-        if (name.empty()) continue;
-
-        string fullPath = basePath.empty() ? name : basePath + "/" + name;
-        if (type == "blob") {
-            result[fullPath] = hash;
-        } else if (type == "tree") {
-            auto sub = readTreeFiles(hash, fullPath);
-            result.insert(sub.begin(), sub.end());
-        }
-    }
-    in.close();
-    return result;
-}
 
 
 // -----------------------------------------------------
 // STATUS HANDLER
 // -----------------------------------------------------
+/**
+ * @brief Handles the  status command workflow.
+ */
 void StatusHandler::handleStatus() {
-    auto work = readWorkingDirectory();
+    auto ignorePatterns = readIgnorePatterns();
+    auto work = readWorkingDirectory(ignorePatterns);
     auto index = readIndex();
 
     unordered_map<string, string> headFiles;
@@ -207,14 +193,14 @@ void StatusHandler::handleStatus() {
 
     string branch = getHeadRef();
     if (!branch.empty()) {
-        cout << "On branch " << CYAN << branch.substr(branch.find_last_of('/') + 1) << RESET << "\n\n";
+        cout << "On branch " << branch.substr(branch.find_last_of('/') + 1) << "\n\n";
     } else {
         cout << "HEAD detached\n\n";
     }
 
     // Changes to be committed
     if (!stagedNew.empty() || !stagedModified.empty() || !stagedDeleted.empty()) {
-        cout << GREEN << "Changes to be committed:" << RESET << "\n";
+        cout << "Changes to be committed:\n";
         cout << "  (use \"mygit restore <file>...\" to unstage)\n\n";
         for (auto &p : stagedNew)      cout << "    new file: " << p << "\n";
         for (auto &p : stagedModified) cout << "    modified: " << p << "\n";
@@ -224,7 +210,7 @@ void StatusHandler::handleStatus() {
 
     // Changes not staged for commit
     if (!modifiedNotStaged.empty() || !deletedNotStaged.empty()) {
-        cout << RED << "Changes not staged for commit:" << RESET << "\n";
+        cout << "Changes not staged for commit:\n";
         cout << "  (use \"mygit rm <file> or mygit rm --cached <file>\" to update what will be committed)\n";
         cout << "  (use \"mygit restore <file>...\" to discard changes in working directory)\n\n";
         for (auto &p : modifiedNotStaged) cout << "    modified: " << p << "\n";
@@ -233,7 +219,7 @@ void StatusHandler::handleStatus() {
     }
 
     if (!untracked.empty()) {
-        cout << YELLOW << "Untracked files:" << RESET << "\n";
+        cout << "Untracked files:\n";
         cout << "  (use \"mygit add <file>...\" to include in what will be committed)\n\n";
         for (auto &p : untracked) cout << "    " << p << "\n";
         cout << "\n\n";

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Declarations for GetAllCommits.
+
 #ifndef GET_ALL_COMMITS_H
 #define GET_ALL_COMMITS_H
 
@@ -14,6 +17,11 @@ struct CommitInfo {
     string message;
 };
 
+/**
+ * @brief Returns all commits.
+ * @param headCommitHash Commit hash currently referenced by HEAD.
+ * @return Container populated with parsed repository data.
+ */
 vector<CommitInfo> getAllCommits(const string &headCommitHash);
 
 #endif

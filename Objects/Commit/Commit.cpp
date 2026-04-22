@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for Commit.
+
 #include "Commit.h"
 
 #include "../../Helper/Hash/Hash.h"
@@ -13,6 +16,9 @@ namespace fs = std::filesystem;
 
 Commit::Commit(const string& treeHash, const vector<string>& parentHashes, const string& message, const string& author, const string& email) : Object("commit"), treeHash(treeHash), parentHashes(parentHashes), message(message), author(author), email(email) {}
 
+/**
+ * @brief Performs save.
+ */
 void Commit::save() {
     ostringstream content;
 

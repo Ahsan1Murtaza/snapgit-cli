@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Declarations for Object.
+
 #ifndef OBJECT_H
 #define OBJECT_H
 

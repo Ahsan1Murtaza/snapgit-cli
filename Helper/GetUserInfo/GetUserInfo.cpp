@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for GetUserInfo.
+
 #include "GetUserInfo.h"
 #include <fstream>
 #include <iostream>
@@ -7,6 +10,10 @@
 
 using namespace std;
 
+/**
+ * @brief Returns user info from config.
+ * @return Requested string value.
+ */
 pair<string, string> getUserInfoFromConfig() {
     ifstream configFile(".mygit/config");
     if (!configFile) {

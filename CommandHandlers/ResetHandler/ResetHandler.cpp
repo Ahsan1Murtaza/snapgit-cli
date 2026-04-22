@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for ResetHandler.
+
 #include "ResetHandler.h"
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include "../../Helper/GetHeadRef/GetHeadRef.h"
@@ -12,6 +15,9 @@ namespace fs = std::filesystem;
 ResetHandler::ResetHandler() {}
 
 // Helper function to clear working directory except .mygit
+/**
+ * @brief Performs clear working directory for reset.
+ */
 void clearWorkingDirectoryForReset() {
     for (const auto& entry : fs::directory_iterator(".")) {
         string name = entry.path().filename().string();
@@ -34,6 +40,11 @@ void clearWorkingDirectoryForReset() {
     }
 }
 
+/**
+ * @brief Handles the  reset command workflow.
+ * @param targetCommit Commit hash to move to.
+ * @param hard When true, also update the working tree to match target commit.
+ */
 void ResetHandler::handleReset(const string& targetCommit, bool hard) {
     // Check if repo exists
     if (!isRepoInitialized()) {

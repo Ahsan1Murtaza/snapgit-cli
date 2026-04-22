@@ -10,6 +10,25 @@ SnapGit is a compact, readable implementation of a version-control system writte
 
 ---
 
+**Commenting Standard (Doxygen + SPDX)**
+- **File header (required for every `*.h` and `*.cpp`):**
+  - First line must be: `// SPDX-License-Identifier: MIT`
+  - Follow with a short file-purpose comment.
+- **Function comment (required):**
+  - Use Doxygen block comments (`/** ... */`) above each function declaration cmake -S . -B build
+cmake --build buildin headers.
+  - For internal/helper functions defined only in `.cpp`, add Doxygen block above the definition.
+- **Required Doxygen tags:**
+  - `@brief` for all functions.
+  - `@param` for every parameter.
+  - `@return` for non-`void` functions.
+- **Optional Doxygen tags:**
+  - `@note` for side effects, assumptions, edge cases, or behavior worth calling out.
+- **Quality rule:**
+  - Comments should explain intent/behavior, not restate obvious syntax.
+
+---
+
 **Scope & Audience**
 - **Scope:** core VCS primitives — `init`, `add`, `commit`, `branch`, `checkout`, `merge`, `status`, `log`, `reset`, `restore`. Uses a simple object store and plain-text index to show how snapshots and references are managed.
 - **Audience:** beginners and developers who want to understand what commits, snapshots, branches, merges, and conflicts actually do behind the scenes. Perfect for learners who run Git commands today without understanding their effects.
@@ -26,38 +45,35 @@ SnapGit is a compact, readable implementation of a version-control system writte
 
 ---
 
-**Quick Start (build & run)**
-- **Windows (recommended):** run the shipped build script in PowerShell:
+**Quick Start (build & run with CMake)**
+- **Ubuntu/Debian prerequisite:** install OpenSSL development headers first:
 
-```powershell
+```bash
+sudo apt update
+sudo apt install -y libssl-dev
+```
+
+- **Configure and build (Linux/macOS/Windows with CMake):**
+
+```bash
 cd <path-to-repo>
-.\build.bat
+cmake -S . -B build
+cmake --build build
 ```
 
-- **Manual g++ build:** this repository can be compiled with `g++`. Example (works with MSYS/mingw):
+- **Run the CLI after build:**
+  - Linux/macOS: `./build/mygit init`
+  - Windows (Visual Studio generator): `.\build\Debug\mygit.exe init`
 
-```powershell
-g++ .\main.cpp .\CommandHandlers\AddHandler\AddHandler.cpp .\CommandHandlers\InitHandler\InitHandler.cpp ^
-  .\CommandHandlers\CommitHandler\CommitHandler.cpp .\CommandHandlers\ConfigHandler\ConfigHandler.cpp ^
-  .\CommandHandlers\BranchHandler\BranchHandler.cpp .\CommandHandlers\CheckoutHandler\CheckoutHandler.cpp ^
-  .\CommandHandlers\LogHandler\LogHandler.cpp .\CommandHandlers\ResetHandler\ResetHandler.cpp ^
-  .\CommandHandlers\StatusHandler\StatusHandler.cpp .\CommandHandlers\RestoreHandler\RestoreHandler.cpp ^
-  .\CommandHandlers\RemoveHandler\RemoveHandler.cpp .\CommandHandlers\MergeHandler\MergeHandler.cpp ^
-  .\Helper\Hash\Hash.cpp .\Helper\RepoCheck\RepoCheck.cpp .\Helper\SortIndex\SortIndex.cpp ^
-  .\Helper\GetCurrentCommitHash\GetCurrentCommitHash.cpp .\Helper\UpdateHead\UpdateHead.cpp ^
-  .\Helper\GetHeadRef\GetHeadRef.cpp .\Helper\GetUserInfo\GetUserInfo.cpp ^
-  .\Helper\GetAllBranches\GetAllBranches.cpp .\Helper\ReadCommit\ReadCommit.cpp ^
-  .\Helper\RestoreTree\RestoreTree.cpp .\Helper\GetAllCommits\GetAllCommits.cpp ^
-  .\Helper\ReadIndex\ReadIndex.cpp .\Objects\Blob\Blob.cpp .\Objects\Tree\Tree.cpp .\Objects\Commit\Commit.cpp -o mygit.exe -lssl -lcrypto
-```
+- **Optional legacy build script:** `build.bat` is still available for Windows users, but CMake is the recommended cross-platform path.
 
-After building, run the CLI:
+After building, run the CLI commands, for example:
 
-```powershell
-.\mygit.exe init
-.\mygit.exe add file.txt
-.\mygit.exe commit -m "first commit"
-.\mygit.exe status
+```bash
+./build/mygit init
+./build/mygit add file.txt
+./build/mygit commit -m "first commit"
+./build/mygit status
 ```
 
 ---
@@ -65,6 +81,8 @@ After building, run the CLI:
 **Commands (high level)**
 - **`init`**: create `.mygit` folder and initial metadata.
 - **`add`**: stage files into index.
+  - Supports `mygit add .` to stage recursively.
+  - Honors ignore rules from `.mygitignore` during recursive staging.
 - **`commit`**: create commit object and update refs.
 - **`branch`**: create/list branches under `.mygit/refs/heads`.
 - **`checkout`**: switch branch or restore tree from commit.
@@ -78,7 +96,8 @@ After building, run the CLI:
 - **`CommandHandlers/`**: each command lives in its own folder (`AddHandler/`, `CommitHandler/`, etc.). Look here to add or modify commands.
 - **`Helper/`**: helper utilities for hashing, reading/writing index, updating HEAD, etc.
 - **`Objects/`**: implementations for `Blob`, `Tree`, `Commit` objects used by the object store.
-- **`build.bat`**: Windows build helper (PowerShell friendly).
+- **`CMakeLists.txt`**: cross-platform build configuration (recommended).
+- **`build.bat`**: legacy Windows build helper (optional).
 - **`runInstructions.txt`**: quick compile/run hints.
 
 ---

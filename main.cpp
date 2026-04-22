@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// CLI entrypoint and command dispatch.
+
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -21,6 +24,9 @@ using namespace std;
 /* Function to print help information
 Displays available commands and their descriptions to the user.
 */
+/**
+ * @brief Performs print help.
+ */
 void printHelp() {
     cout << "SnapGit - A Simple git clone!\n\n";
     cout << "Available commands:\n";
@@ -40,23 +46,22 @@ void printHelp() {
     cout << "Use \"mygit <command> --help\" for more information on a specific command.\n";
 }
 
-#define COLOR_RESET   "\033[0m"
-#define COLOR_CMD     "\033[1;36m"   // Cyan bold
-#define COLOR_TITLE   "\033[1;33m"   // Yellow bold
-#define COLOR_TEXT    "\033[0;37m"   // Gray/white
-
+/**
+ * @brief Performs print command help.
+ * @param command Input value for `command`.
+ */
 void printCommandHelp(const std::string& command) {
 
     auto title = [&](const string& t){
-        cout << COLOR_TITLE << t << COLOR_RESET << "\n";
+        cout << t << "\n";
     };
 
     auto cmd = [&](const string& t){
-        cout << "  " << COLOR_CMD << t << COLOR_RESET << "\n";
+        cout << "  " << t << "\n";
     };
 
     auto text = [&](const string& t){
-        cout << "      " << COLOR_TEXT << t << COLOR_RESET << "\n";
+        cout << "      " << t << "\n";
     };
 
     if (command == "init") {
@@ -67,7 +72,9 @@ void printCommandHelp(const std::string& command) {
     else if (command == "add") {
         title("Add files to staging area");
         cmd("mygit add <file>");
-        text("Adds specified file to the index.");
+        cmd("mygit add .");
+        text("Adds specified file or all files recursively to the index.");
+        text("Reads ignore rules from .mygitignore when staging recursively.");
         text("Example: mygit add file.txt");
     }
     else if (command == "commit") {
@@ -136,10 +143,15 @@ void printCommandHelp(const std::string& command) {
         text("Shows detailed help for the given command.");
     }
     else {
-        cout << COLOR_TITLE << "Unknown command: " << COLOR_CMD << command << COLOR_RESET << "\n";
+        cout << "Unknown command: " << command << "\n";
     }
 }
 
+/**
+ * @brief Parses command-line arguments and dispatches commands.
+ * @param argc Input value for `argc`.
+ * @return Process exit code (0 on success, non-zero on failure).
+ */
 int main(int argc, char* argv[]) {
 
     InitHandler initHandler;       // Create an instance of InitHandler

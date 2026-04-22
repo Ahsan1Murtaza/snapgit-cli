@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for Blob.
+
 #include "Blob.h"
 #include <fstream>
 #include <sstream>
@@ -14,6 +17,11 @@ Constructor to create a Blob object from a file path.
 Blob data Format: "blob <size>\0<content>"
 Call sha1 on the blob data to get the hash.
 */
+/**
+ * @brief Performs file path.
+ * @param filePath Path to the target file relative to the repository root.
+ * @return Requested value produced by this function.
+ */
 Blob::Blob(const string& filePath) : Object("blob"), filePath(filePath) {
     // Read file content
     ifstream file(filePath, ios::binary);
@@ -36,6 +44,9 @@ Blob::Blob(const string& filePath) : Object("blob"), filePath(filePath) {
 
 }
 
+/**
+ * @brief Performs save.
+ */
 void Blob::save() {
     // Save the blob data to a file
     string dir = ".mygit/objects/" + hash.substr(0, 2);

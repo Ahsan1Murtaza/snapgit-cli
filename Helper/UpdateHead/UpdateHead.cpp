@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for UpdateHead.
+
 #include "UpdateHead.h"
 #include "../GetHeadRef/GetHeadRef.h"
 #include <fstream>
@@ -5,6 +8,10 @@
 #include <iostream>
 using namespace std;
 
+/**
+ * @brief Updates head.
+ * @param newHash Commit hash that HEAD should point to.
+ */
 void updateHead(const string& newHash) {
 
     string refFile = getHeadRef();
