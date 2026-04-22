@@ -33,10 +33,10 @@ namespace fs = std::filesystem;
   Works fine for typical DAGs. For very large repos you could optimize.
 */
 /**
- * @brief findCommonAncestorSimple operation.
- * @param a Parameter description.
- * @param b Parameter description.
- * @return Return value description.
+ * @brief Performs find common ancestor simple.
+ * @param a Input value for `a`.
+ * @param b Input value for `b`.
+ * @return Requested string value.
  */
 static string findCommonAncestorSimple(const string &a, const string &b) {
     if (a.empty() || b.empty()) return "";
@@ -72,11 +72,11 @@ static string findCommonAncestorSimple(const string &a, const string &b) {
     >>>>>>> otherBranch
 */
 /**
- * @brief writeConflictMarkers operation.
- * @param path Parameter description.
- * @param currentHash Parameter description.
- * @param otherHash Parameter description.
- * @param otherBranchName Parameter description.
+ * @brief Writes conflict markers to repository storage.
+ * @param path Filesystem path to process.
+ * @param currentHash Input value for `currentHash`.
+ * @param otherHash Input value for `otherHash`.
+ * @param otherBranchName Input value for `otherBranchName`.
  */
 static void writeConflictMarkers(const string& path, const string& currentHash, const string& otherHash, const string& otherBranchName) {
     string curBlob = ".mygit/objects/" + currentHash.substr(0,2) + "/" + currentHash.substr(2);
@@ -120,8 +120,8 @@ static void writeConflictMarkers(const string& path, const string& currentHash, 
   Write index in your repository format: "path hash"
 */
 /**
- * @brief updateIndexFromTree operation.
- * @param treeHash Parameter description.
+ * @brief Updates index from tree.
+ * @param treeHash Hash of the tree object to read.
  */
 static void updateIndexFromTree(const string& treeHash) {
     auto files = readTreeFiles(treeHash);
@@ -141,8 +141,8 @@ static void updateIndexFromTree(const string& treeHash) {
   otherBranch: branch name (e.g., "feature-b")
 */
 /**
- * @brief handleMerge operation.
- * @param otherBranch Parameter description.
+ * @brief Handles the  merge command workflow.
+ * @param otherBranch Name of the branch to merge into the current branch.
  */
 void MergeHandler::handleMerge(const string& otherBranch) {
     if (!isRepoInitialized()) {

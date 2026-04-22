@@ -15,8 +15,8 @@ using namespace std;
 Reads the index file, sorts the entries, and writes them back.
 */
 /**
- * @brief sortIndexFile operation.
- * @param indexPath Parameter description.
+ * @brief Performs sort index file.
+ * @param indexPath Path to the index file.
  */
 void sortIndexFile(const string& indexPath) {
     ifstream indexFile(indexPath);

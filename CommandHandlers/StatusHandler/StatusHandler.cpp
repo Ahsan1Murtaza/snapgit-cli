@@ -28,9 +28,9 @@ namespace fs = std::filesystem;
 // READ WORKING DIRECTORY (ignore .mygit)
 // -----------------------------------------------------
 /**
- * @brief readWorkingDirectory operation.
- * @param ignorePatterns Parameter description.
- * @return Return value description.
+ * @brief Reads working directory from repository storage.
+ * @param ignorePatterns Input value for `ignorePatterns`.
+ * @return Requested string value.
  */
 unordered_map<string, string> readWorkingDirectory(const vector<string>& ignorePatterns) {
     unordered_map<string, string> result;
@@ -87,7 +87,7 @@ unordered_map<string, string> readWorkingDirectory(const vector<string>& ignoreP
 // STATUS HANDLER
 // -----------------------------------------------------
 /**
- * @brief handleStatus operation.
+ * @brief Handles the  status command workflow.
  */
 void StatusHandler::handleStatus() {
     auto ignorePatterns = readIgnorePatterns();
@@ -227,9 +227,6 @@ void StatusHandler::handleStatus() {
 
     // Clean working tree message
     if (stagedNew.empty() && stagedModified.empty() && stagedDeleted.empty() &&
-        /**
-         * @brief modifiedNotStaged.empty operation.
-         */
         modifiedNotStaged.empty() && deletedNotStaged.empty() && untracked.empty()) {
         cout << "nothing to commit, working tree clean\n\n";
     } else if (untracked.size() && stagedNew.empty() && stagedModified.empty() && stagedDeleted.empty()) {

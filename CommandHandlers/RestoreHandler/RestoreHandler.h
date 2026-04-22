@@ -8,13 +8,10 @@
 
 class RestoreHandler {
 public:
-    /**
-     * @brief RestoreHandler operation.
-     */
     RestoreHandler() {};
     /**
-     * @brief handleRestore operation.
-     * @param filePath Parameter description.
+     * @brief Handles the  restore command workflow.
+     * @param filePath Path to the target file relative to the repository root.
      */
     void handleRestore(const std::string& filePath);
 };

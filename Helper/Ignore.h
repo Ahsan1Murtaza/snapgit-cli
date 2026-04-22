@@ -8,15 +8,15 @@
 #include <vector>
 
 /**
- * @brief readIgnorePatterns operation.
- * @return Return value description.
+ * @brief Reads ignore patterns from repository storage.
+ * @return Requested string value.
  */
 std::vector<std::string> readIgnorePatterns();
 /**
- * @brief isIgnoredPath operation.
- * @param relativePath Parameter description.
- * @param patterns Parameter description.
- * @return Return value description.
+ * @brief Checks whether ignored path.
+ * @param relativePath Path relative to the repository root.
+ * @param patterns Ignore patterns loaded from .mygitignore.
+ * @return True when the check succeeds; otherwise false.
  */
 bool isIgnoredPath(const std::string& relativePath, const std::vector<std::string>& patterns);
 

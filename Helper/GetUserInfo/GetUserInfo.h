@@ -8,8 +8,8 @@
 #include <utility>
 
 /**
- * @brief getUserInfoFromConfig operation.
- * @return Return value description.
+ * @brief Returns user info from config.
+ * @return Requested string value.
  */
 std::pair<std::string, std::string> getUserInfoFromConfig();
 

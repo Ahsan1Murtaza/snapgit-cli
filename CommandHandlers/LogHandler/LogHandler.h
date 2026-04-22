@@ -9,7 +9,7 @@ using namespace std;
 class LogHandler {
 public:
     /**
-     * @brief handleLog operation.
+     * @brief Handles the  log command workflow.
      */
     void handleLog();
 };

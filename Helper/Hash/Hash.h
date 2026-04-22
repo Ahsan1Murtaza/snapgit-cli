@@ -7,9 +7,9 @@
 #include <string>
 
 /**
- * @brief sha1 operation.
- * @param data Parameter description.
- * @return Return value description.
+ * @brief Performs sha1.
+ * @param data Input content to hash.
+ * @return Requested string value.
  */
 std::string sha1(const std::string& data);
 

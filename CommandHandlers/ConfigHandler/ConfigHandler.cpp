@@ -10,9 +10,9 @@
 using namespace std;
 
 /**
- * @brief handleConfig operation.
- * @param name Parameter description.
- * @param email Parameter description.
+ * @brief Handles the  config command workflow.
+ * @param name Configured author name.
+ * @param email Configured author email.
  */
 void ConfigHandler::handleConfig(const string& name, const string& email) {
     namespace fs = std::filesystem;

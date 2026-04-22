@@ -25,7 +25,7 @@ using namespace std;
 Displays available commands and their descriptions to the user.
 */
 /**
- * @brief printHelp operation.
+ * @brief Performs print help.
  */
 void printHelp() {
     cout << "SnapGit - A Simple git clone!\n\n";
@@ -47,34 +47,19 @@ void printHelp() {
 }
 
 /**
- * @brief printCommandHelp operation.
- * @param command Parameter description.
+ * @brief Performs print command help.
+ * @param command Input value for `command`.
  */
 void printCommandHelp(const std::string& command) {
 
-    /**
-     * @brief [&] operation.
-     * @param t Parameter description.
-     * @return Return value description.
-     */
     auto title = [&](const string& t){
         cout << t << "\n";
     };
 
-    /**
-     * @brief [&] operation.
-     * @param t Parameter description.
-     * @return Return value description.
-     */
     auto cmd = [&](const string& t){
         cout << "  " << t << "\n";
     };
 
-    /**
-     * @brief [&] operation.
-     * @param t Parameter description.
-     * @return Return value description.
-     */
     auto text = [&](const string& t){
         cout << "      " << t << "\n";
     };
@@ -163,9 +148,9 @@ void printCommandHelp(const std::string& command) {
 }
 
 /**
- * @brief main operation.
- * @param argc Parameter description.
- * @return Return value description.
+ * @brief Parses command-line arguments and dispatches commands.
+ * @param argc Input value for `argc`.
+ * @return Process exit code (0 on success, non-zero on failure).
  */
 int main(int argc, char* argv[]) {
 

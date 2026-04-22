@@ -9,7 +9,7 @@ using namespace std;
 class StatusHandler {
 public:
     /**
-     * @brief handleStatus operation.
+     * @brief Handles the  status command workflow.
      */
     void handleStatus();
 };

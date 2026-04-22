@@ -10,7 +10,7 @@
 using namespace std;
 
 /**
- * @brief getAllBranches operation.
+ * @brief Returns all branches.
  */
 void getAllBranches() {
     string currentBranch = "";

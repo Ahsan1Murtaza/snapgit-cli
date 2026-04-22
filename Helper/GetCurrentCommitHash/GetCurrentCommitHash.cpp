@@ -12,23 +12,13 @@
 using namespace std;
 
 /**
- * @brief trim operation.
- * @param s Parameter description.
- * @return Return value description.
+ * @brief Performs trim.
+ * @param s Input string to trim.
+ * @return Requested string value.
  */
 static string trim(const string& s) {
-    /**
-     * @brief find_if_not operation.
-     * @param ch Parameter description.
-     * @return Return value description.
-     */
     auto start = find_if_not(s.begin(), s.end(), [](unsigned char ch) { return isspace(ch); });
     if (start == s.end()) return "";
-    /**
-     * @brief find_if_not operation.
-     * @param ch Parameter description.
-     * @return Return value description.
-     */
     auto end = find_if_not(s.rbegin(), s.rend(), [](unsigned char ch) { return isspace(ch); }).base();
     return string(start, end);
 }
@@ -38,8 +28,8 @@ This function returns currentCommitHash
 if not present then return empty string
 */
 /**
- * @brief getCurrentCommitHash operation.
- * @return Return value description.
+ * @brief Returns current commit hash.
+ * @return Current commit hash, or an empty string when unavailable.
  */
 string getCurrentCommitHash() {
     string currentBranchFile = getHeadRef();

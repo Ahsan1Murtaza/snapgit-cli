@@ -14,18 +14,10 @@ using namespace std;
 namespace fs = std::filesystem;
 
 
-/**
- * @brief Commit operation.
- * @param treeHash Parameter description.
- * @param parentHashes Parameter description.
- * @param message Parameter description.
- * @param author Parameter description.
- * @param email Parameter description.
- */
 Commit::Commit(const string& treeHash, const vector<string>& parentHashes, const string& message, const string& author, const string& email) : Object("commit"), treeHash(treeHash), parentHashes(parentHashes), message(message), author(author), email(email) {}
 
 /**
- * @brief save operation.
+ * @brief Performs save.
  */
 void Commit::save() {
     ostringstream content;

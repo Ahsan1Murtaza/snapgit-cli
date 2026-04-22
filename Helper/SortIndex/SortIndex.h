@@ -9,8 +9,8 @@
 #include <string>
 
 /**
- * @brief sortIndexFile operation.
- * @param indexPath Parameter description.
+ * @brief Performs sort index file.
+ * @param indexPath Path to the index file.
  */
 void sortIndexFile(const std::string& indexPath);
 

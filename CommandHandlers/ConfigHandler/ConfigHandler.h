@@ -9,9 +9,9 @@
 class ConfigHandler {
 public:
     /**
-     * @brief handleConfig operation.
-     * @param name Parameter description.
-     * @param email Parameter description.
+     * @brief Handles the  config command workflow.
+     * @param name Configured author name.
+     * @param email Configured author email.
      */
     void handleConfig(const std::string& name, const std::string& email);
 };

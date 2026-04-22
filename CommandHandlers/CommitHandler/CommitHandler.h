@@ -9,12 +9,12 @@
 class CommitHandler {
 public:
     /**
-     * @brief CommitHandler operation.
+     * @brief Constructs a CommitHandler instance.
      */
     CommitHandler();
     /**
-     * @brief handleCommit operation.
-     * @param message Parameter description.
+     * @brief Handles the  commit command workflow.
+     * @param message Commit message to store with the new commit.
      */
     void handleCommit(const std::string& message);
 };

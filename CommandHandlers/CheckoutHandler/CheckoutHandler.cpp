@@ -15,14 +15,11 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-/**
- * @brief CheckoutHandler operation.
- */
 CheckoutHandler::CheckoutHandler() {}
 
 // Helper function to clear working directory except .mygit
 /**
- * @brief clearWorkingDirectory operation.
+ * @brief Performs clear working directory.
  */
 void clearWorkingDirectory() {
     for (const auto& entry : fs::directory_iterator(".")) {
@@ -48,8 +45,8 @@ void clearWorkingDirectory() {
 }
 
 /**
- * @brief handleCheckout operation.
- * @param refInput Parameter description.
+ * @brief Handles the  checkout command workflow.
+ * @param refInput Branch name or commit hash to check out.
  */
 void CheckoutHandler::handleCheckout(const string& refInput) {
     // Check if repo exists

@@ -5,8 +5,8 @@
 #include <fstream>
 
 /**
- * @brief readIndex operation.
- * @return Return value description.
+ * @brief Reads index from repository storage.
+ * @return Requested string value.
  */
 std::unordered_map<std::string, std::string> readIndex() {
     std::unordered_map<std::string, std::string> result;

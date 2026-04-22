@@ -7,8 +7,8 @@
 #include<string>
 
 /**
- * @brief getCurrentCommitHash operation.
- * @return Return value description.
+ * @brief Returns current commit hash.
+ * @return Current commit hash, or an empty string when unavailable.
  */
 std::string getCurrentCommitHash();
 

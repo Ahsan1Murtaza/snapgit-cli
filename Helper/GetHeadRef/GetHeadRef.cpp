@@ -11,8 +11,8 @@ using namespace std;
 
 
 /**
- * @brief getHeadRef operation.
- * @return Return value description.
+ * @brief Returns head ref.
+ * @return Requested string value.
  */
 string getHeadRef() {
     ifstream headFile(".mygit/HEAD");

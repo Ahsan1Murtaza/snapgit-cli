@@ -13,9 +13,9 @@ using namespace std;
 namespace fs = std::filesystem;
 
 /**
- * @brief handleRemove operation.
- * @param filePath Parameter description.
- * @param cached Parameter description.
+ * @brief Handles the  remove command workflow.
+ * @param filePath Path to the target file relative to the repository root.
+ * @param cached When true, remove only from index and keep working tree file.
  */
 void RemoveHandler::handleRemove(const string& filePath, bool cached) {
     auto index = readIndex();

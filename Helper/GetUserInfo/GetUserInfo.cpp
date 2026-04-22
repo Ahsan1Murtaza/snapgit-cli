@@ -11,8 +11,8 @@
 using namespace std;
 
 /**
- * @brief getUserInfoFromConfig operation.
- * @return Return value description.
+ * @brief Returns user info from config.
+ * @return Requested string value.
  */
 pair<string, string> getUserInfoFromConfig() {
     ifstream configFile(".mygit/config");
@@ -35,16 +35,7 @@ pair<string, string> getUserInfoFromConfig() {
     }
 
     // --- Universal trim (handles spaces, tabs, carriage returns, newlines) ---
-    /**
-     * @brief [] operation.
-     * @param s Parameter description.
-     * @return Return value description.
-     */
     auto trim = [](string &s) {
-        /**
-         * @brief s.erase operation.
-         * @param ch Parameter description.
-         */
         s.erase(remove_if(s.begin(), s.end(), [](unsigned char ch) {
             return ch == '\r' || ch == '\n' || isspace(ch);
         }), s.end());

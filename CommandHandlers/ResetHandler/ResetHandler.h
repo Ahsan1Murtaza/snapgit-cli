@@ -10,13 +10,13 @@ using namespace std;
 class ResetHandler {
 public:
     /**
-     * @brief ResetHandler operation.
+     * @brief Constructs a ResetHandler instance.
      */
     ResetHandler();
     /**
-     * @brief handleReset operation.
-     * @param targetCommit Parameter description.
-     * @param hard Parameter description.
+     * @brief Handles the  reset command workflow.
+     * @param targetCommit Commit hash to move to.
+     * @param hard When true, also update the working tree to match target commit.
      */
     void handleReset(const string& targetCommit, bool hard = false);
 };

@@ -14,9 +14,6 @@ using namespace std;
 
 
 // Constructor
-/**
- * @brief InitHandler operation.
- */
 InitHandler::InitHandler() {}
 
 
@@ -26,9 +23,9 @@ InitHandler::InitHandler() {}
 Returns true if the directory exists, false otherwise.
 */
 /**
- * @brief dirExists operation.
- * @param path Parameter description.
- * @return Return value description.
+ * @brief Performs dir exists.
+ * @param path Filesystem path to process.
+ * @return True when the check succeeds; otherwise false.
  */
 bool InitHandler::dirExists(const string& path) {
 
@@ -43,9 +40,9 @@ bool InitHandler::dirExists(const string& path) {
 Returns true if the directory was created successfully or already exists, false otherwise.
 */
 /**
- * @brief createDir operation.
- * @param path Parameter description.
- * @return Return value description.
+ * @brief Creates dir.
+ * @param path Filesystem path to process.
+ * @return True when the check succeeds; otherwise false.
  */
 bool InitHandler::createDir(const string& path) {
     
@@ -69,7 +66,7 @@ Folder structure created:
             main
 */
 /**
- * @brief handleInit operation.
+ * @brief Handles the  init command workflow.
  */
 void InitHandler::handleInit() {
 

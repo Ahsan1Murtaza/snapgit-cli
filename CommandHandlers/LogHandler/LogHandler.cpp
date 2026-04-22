@@ -11,7 +11,7 @@
 using namespace std;
 
 /**
- * @brief handleLog operation.
+ * @brief Handles the  log command workflow.
  */
 void LogHandler::handleLog() {
     if (!isRepoInitialized()) {

@@ -18,9 +18,9 @@ struct CommitInfo {
 };
 
 /**
- * @brief getAllCommits operation.
- * @param headCommitHash Parameter description.
- * @return Return value description.
+ * @brief Returns all commits.
+ * @param headCommitHash Commit hash currently referenced by HEAD.
+ * @return Container populated with parsed repository data.
  */
 vector<CommitInfo> getAllCommits(const string &headCommitHash);
 

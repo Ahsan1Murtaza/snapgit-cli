@@ -16,8 +16,8 @@ namespace fs = std::filesystem;
 
 
 /**
- * @brief handleRestore operation.
- * @param filePath Parameter description.
+ * @brief Handles the  restore command workflow.
+ * @param filePath Path to the target file relative to the repository root.
  */
 void RestoreHandler::handleRestore(const string& filePath) {
     auto index = readIndex();

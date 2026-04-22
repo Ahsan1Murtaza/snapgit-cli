@@ -15,9 +15,9 @@ using namespace std;
 namespace fs = std::filesystem;
 
 /**
- * @brief readFile operation.
- * @param path Parameter description.
- * @return Return value description.
+ * @brief Reads file from repository storage.
+ * @param path Filesystem path to process.
+ * @return Requested string value.
  */
 static string readFile(const string &path) {
     ifstream f(path, ios::binary);
@@ -29,9 +29,9 @@ static string readFile(const string &path) {
 
 // Try object path resolution: xx/yyyy... or flat
 /**
- * @brief getObjectPath operation.
- * @param hash Parameter description.
- * @return Return value description.
+ * @brief Returns object path.
+ * @param hash Input value for `hash`.
+ * @return Requested string value.
  */
 static string getObjectPath(const string &hash) {
     if (hash.size() >= 3) {
@@ -44,9 +44,9 @@ static string getObjectPath(const string &hash) {
 
 // Trim trailing and leading whitespace
 /**
- * @brief trim operation.
- * @param s Parameter description.
- * @return Return value description.
+ * @brief Performs trim.
+ * @param s Input string to trim.
+ * @return Requested string value.
  */
 static string trim(const string &s) {
     size_t i = 0, j = s.size();
@@ -57,10 +57,10 @@ static string trim(const string &s) {
 }
 
 /**
- * @brief parseCommitFile operation.
- * @param commitHash Parameter description.
- * @param info Parameter description.
- * @return Return value description.
+ * @brief Performs parse commit file.
+ * @param commitHash Hash of the commit object.
+ * @param info Input value for `info`.
+ * @return True when the check succeeds; otherwise false.
  */
 static bool parseCommitFile(const string &commitHash, CommitInfo &info) {
     string path = getObjectPath(commitHash);
@@ -108,9 +108,9 @@ static bool parseCommitFile(const string &commitHash, CommitInfo &info) {
 
 
 /**
- * @brief getAllCommits operation.
- * @param headCommitHash Parameter description.
- * @return Return value description.
+ * @brief Returns all commits.
+ * @param headCommitHash Commit hash currently referenced by HEAD.
+ * @return Container populated with parsed repository data.
  */
 vector<CommitInfo> getAllCommits(const string &headCommitHash) {
     vector<CommitInfo> result;

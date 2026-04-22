@@ -12,12 +12,12 @@ private:
 
 public:
     /**
-     * @brief Blob operation.
-     * @param filePath Parameter description.
+     * @brief Constructs a Blob instance.
+     * @param filePath Path to the target file relative to the repository root.
      */
     Blob(const string& filePath);
     /**
-     * @brief save operation.
+     * @brief Performs save.
      */
     void save() override;
 };

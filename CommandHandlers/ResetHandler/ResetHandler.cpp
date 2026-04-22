@@ -12,14 +12,11 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-/**
- * @brief ResetHandler operation.
- */
 ResetHandler::ResetHandler() {}
 
 // Helper function to clear working directory except .mygit
 /**
- * @brief clearWorkingDirectoryForReset operation.
+ * @brief Performs clear working directory for reset.
  */
 void clearWorkingDirectoryForReset() {
     for (const auto& entry : fs::directory_iterator(".")) {
@@ -44,9 +41,9 @@ void clearWorkingDirectoryForReset() {
 }
 
 /**
- * @brief handleReset operation.
- * @param targetCommit Parameter description.
- * @param hard Parameter description.
+ * @brief Handles the  reset command workflow.
+ * @param targetCommit Commit hash to move to.
+ * @param hard When true, also update the working tree to match target commit.
  */
 void ResetHandler::handleReset(const string& targetCommit, bool hard) {
     // Check if repo exists

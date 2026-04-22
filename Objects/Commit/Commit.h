@@ -17,17 +17,17 @@ private:
     std:: string message;
 public:
     /**
-     * @brief Commit operation.
-     * @param treeHash Parameter description.
-     * @param parentHashes Parameter description.
-     * @param message Parameter description.
-     * @param author Parameter description.
-     * @param email Parameter description.
+     * @brief Constructs a Commit instance.
+     * @param treeHash Hash of the tree object to read.
+     * @param parentHashes Input value for `parentHashes`.
+     * @param message Commit message to store with the new commit.
+     * @param author Input value for `author`.
+     * @param email Configured author email.
      */
     Commit(const string& treeHash, const std::vector<std::string>& parentHashes, const string& message, const string& author, const string& email);
 
     /**
-     * @brief save operation.
+     * @brief Performs save.
      */
     void save() override;
 };

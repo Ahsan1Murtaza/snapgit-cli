@@ -7,13 +7,10 @@
 #include <string>
 class MergeHandler {
 public:
-    /**
-     * @brief MergeHandler operation.
-     */
     MergeHandler() = default;
     /**
-     * @brief handleMerge operation.
-     * @param otherBranch Parameter description.
+     * @brief Handles the  merge command workflow.
+     * @param otherBranch Name of the branch to merge into the current branch.
      */
     void handleMerge(const std::string& otherBranch);
 };

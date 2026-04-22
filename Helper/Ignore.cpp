@@ -13,8 +13,8 @@ using namespace std;
 namespace fs = std::filesystem;
 
 /**
- * @brief readIgnorePatterns operation.
- * @return Return value description.
+ * @brief Reads ignore patterns from repository storage.
+ * @return Requested string value.
  */
 vector<string> readIgnorePatterns() {
     vector<string> patterns;
@@ -22,17 +22,9 @@ vector<string> readIgnorePatterns() {
     string line;
 
     while (getline(ignoreFile, line)) {
-        /**
-         * @brief line.erase operation.
-         * @param ch Parameter description.
-         */
         line.erase(line.begin(), find_if(line.begin(), line.end(), [](unsigned char ch) {
             return !isspace(ch);
         }));
-        /**
-         * @brief line.erase operation.
-         * @param ch Parameter description.
-         */
         line.erase(find_if(line.rbegin(), line.rend(), [](unsigned char ch) {
             return !isspace(ch);
         }).base(), line.end());
@@ -51,10 +43,10 @@ vector<string> readIgnorePatterns() {
 }
 
 /**
- * @brief isIgnoredPath operation.
- * @param relativePath Parameter description.
- * @param patterns Parameter description.
- * @return Return value description.
+ * @brief Checks whether ignored path.
+ * @param relativePath Path relative to the repository root.
+ * @param patterns Ignore patterns loaded from .mygitignore.
+ * @return True when the check succeeds; otherwise false.
  */
 bool isIgnoredPath(const string& relativePath, const vector<string>& patterns) {
     fs::path relPath(relativePath);

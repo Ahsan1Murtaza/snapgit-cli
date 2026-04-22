@@ -8,8 +8,8 @@
 Returns true if the .mygit directory exists, false otherwise.
 */
 /**
- * @brief isRepoInitialized operation.
- * @return Return value description.
+ * @brief Checks whether repo initialized.
+ * @return True when the check succeeds; otherwise false.
  */
 bool isRepoInitialized() {
     return std::filesystem::exists(".mygit") && std::filesystem::is_directory(".mygit");

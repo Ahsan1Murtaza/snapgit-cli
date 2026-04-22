@@ -9,8 +9,8 @@
 class BranchHandler {
 public:
     /**
-     * @brief handleBranch operation.
-     * @param branchName Parameter description.
+     * @brief Handles the  branch command workflow.
+     * @param branchName Branch name to create or inspect.
      */
     void handleBranch(const std::string &branchName = "");
 };

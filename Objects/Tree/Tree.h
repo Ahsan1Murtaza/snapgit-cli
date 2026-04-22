@@ -18,49 +18,39 @@ class Tree : public Object {
     std::string treeContent; // To store content of tree
 public:
     /**
-     * @brief Tree operation.
+     * @brief Constructs a Tree instance.
      */
     Tree();
-     /**
-      * @brief ~Tree operation.
-      */
      ~Tree();   // to clean up dynamically allocated memory
 
     /**
-     * @brief addBlob operation.
-     * @param filePath Parameter description.
-     * @param blobHash Parameter description.
+     * @brief Performs add blob.
+     * @param filePath Path to the target file relative to the repository root.
+     * @param blobHash Hash of the blob object.
      */
     void addBlob(const std::string& filePath, const std::string& blobHash);
 
     /**
-     * @brief getOrCreateSubTree operation.
-     * @param folderName Parameter description.
-     * @return Return value description.
+     * @brief Returns or create sub tree.
+     * @param folderName Folder name for the subtree node.
+     * @return Pointer to the requested object; may be null when unavailable.
      */
     Tree* getOrCreateSubTree(const std::string& folderName);
 
     /**
-     * @brief buildFromIndex operation.
-     * @param indexPath Parameter description.
+     * @brief Performs build from index.
+     * @param indexPath Path to the index file.
      */
     void buildFromIndex(const std::string& indexPath);
 
 
     /**
-     * @brief save operation.
+     * @brief Performs save.
      */
     void save() override;
 
     // Disable copy to avoid double-deletes
-    /**
-     * @brief Tree operation.
-     */
     Tree(const Tree&) = delete;
-    /**
-     * @brief operator= operation.
-     * @return Return value description.
-     */
     Tree& operator=(const Tree&) = delete;
 
     // void showTreeElements(int depth = 0) const; // For development purpose

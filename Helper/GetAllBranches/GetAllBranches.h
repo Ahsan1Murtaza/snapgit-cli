@@ -5,7 +5,7 @@
 #define GET_ALL_BRANCHES_H
 
 /**
- * @brief getAllBranches operation.
+ * @brief Returns all branches.
  */
 void getAllBranches();
 

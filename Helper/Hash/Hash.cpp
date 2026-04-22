@@ -18,9 +18,9 @@ Total length of SHA-1 hash is 40 characters (160 bits)
 20 char is converted to 40 char hex string
 */
 /**
- * @brief sha1 operation.
- * @param data Parameter description.
- * @return Return value description.
+ * @brief Performs sha1.
+ * @param data Input content to hash.
+ * @return Requested string value.
  */
 std::string sha1(const std::string& data) {
     unsigned char hash[SHA_DIGEST_LENGTH]; // SHA_DIGEST_LENGTH is 20 bytes

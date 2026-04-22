@@ -8,8 +8,8 @@
 
 
 /**
- * @brief updateHead operation.
- * @param newHash Parameter description.
+ * @brief Updates head.
+ * @param newHash Commit hash that HEAD should point to.
  */
 void updateHead(const std::string& newHash);
 

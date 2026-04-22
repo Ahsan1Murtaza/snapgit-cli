@@ -8,14 +8,11 @@
 using namespace std;
 
 /**
- * @brief restoreTree operation.
- * @param treeHash Parameter description.
- * @param basePath Parameter description.
+ * @brief Performs restore tree.
+ * @param treeHash Hash of the tree object to read.
+ * @param basePath Base path used while walking tree entries.
  */
 void restoreTree(const string& treeHash, const string& basePath = "");
-/**
- * @brief writeIndexFile operation.
- */
 void writeIndexFile();  // ✨ NEW: Declare new function
 
 #endif

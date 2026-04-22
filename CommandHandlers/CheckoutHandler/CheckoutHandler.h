@@ -10,12 +10,12 @@
 class CheckoutHandler {
 public:
     /**
-     * @brief CheckoutHandler operation.
+     * @brief Constructs a CheckoutHandler instance.
      */
     CheckoutHandler();
     /**
-     * @brief handleCheckout operation.
-     * @param refInput Parameter description.
+     * @brief Handles the  checkout command workflow.
+     * @param refInput Branch name or commit hash to check out.
      */
     void handleCheckout(const std::string& refInput);
 };

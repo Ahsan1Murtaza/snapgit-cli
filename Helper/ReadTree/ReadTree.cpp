@@ -11,10 +11,10 @@ using namespace std;
 namespace fs = std::filesystem;
 
 /**
- * @brief readTreeFiles operation.
- * @param treeHash Parameter description.
- * @param basePath Parameter description.
- * @return Return value description.
+ * @brief Reads tree files from repository storage.
+ * @param treeHash Hash of the tree object to read.
+ * @param basePath Base path used while walking tree entries.
+ * @return Requested string value.
  */
 unordered_map<string, string> readTreeFiles(const string& treeHash, const string& basePath) {
     unordered_map<string, string> result;

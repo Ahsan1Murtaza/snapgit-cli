@@ -14,9 +14,9 @@ namespace fs = std::filesystem;
 vector<pair<string, string>> indexEntries;
 
 /**
- * @brief restoreTree operation.
- * @param treeHash Parameter description.
- * @param basePath Parameter description.
+ * @brief Performs restore tree.
+ * @param treeHash Hash of the tree object to read.
+ * @param basePath Base path used while walking tree entries.
  */
 void restoreTree(const string& treeHash, const string& basePath) {
     string folder = ".mygit/objects/" + treeHash.substr(0, 2);
@@ -78,7 +78,7 @@ void restoreTree(const string& treeHash, const string& basePath) {
 
 // Function to write index file
 /**
- * @brief writeIndexFile operation.
+ * @brief Writes index file to repository storage.
  */
 void writeIndexFile() {
     ofstream indexFile(".mygit/index");

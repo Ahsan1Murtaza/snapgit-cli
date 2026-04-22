@@ -18,9 +18,6 @@
 
 using namespace std;
 
-/**
- * @brief CommitHandler operation.
- */
 CommitHandler::CommitHandler() {};
 
 /*

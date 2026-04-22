@@ -18,8 +18,9 @@ Blob data Format: "blob <size>\0<content>"
 Call sha1 on the blob data to get the hash.
 */
 /**
- * @brief Blob operation.
- * @param filePath Parameter description.
+ * @brief Performs file path.
+ * @param filePath Path to the target file relative to the repository root.
+ * @return Requested value produced by this function.
  */
 Blob::Blob(const string& filePath) : Object("blob"), filePath(filePath) {
     // Read file content
@@ -44,7 +45,7 @@ Blob::Blob(const string& filePath) : Object("blob"), filePath(filePath) {
 }
 
 /**
- * @brief save operation.
+ * @brief Performs save.
  */
 void Blob::save() {
     // Save the blob data to a file

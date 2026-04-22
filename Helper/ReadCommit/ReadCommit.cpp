@@ -8,9 +8,9 @@
 using namespace std;
 
 /**
- * @brief readCommit operation.
- * @param commitHash Parameter description.
- * @return Return value description.
+ * @brief Reads commit from repository storage.
+ * @param commitHash Hash of the commit object.
+ * @return Requested value produced by this function.
  */
 CommitData readCommit(const string& commitHash) {
     CommitData data;

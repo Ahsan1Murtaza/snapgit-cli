@@ -8,10 +8,10 @@
 #include <unordered_map>
 
 /**
- * @brief readTreeFiles operation.
- * @param treeHash Parameter description.
- * @param basePath Parameter description.
- * @return Return value description.
+ * @brief Reads tree files from repository storage.
+ * @param treeHash Hash of the tree object to read.
+ * @param basePath Base path used while walking tree entries.
+ * @return Requested string value.
  */
 std::unordered_map<std::string, std::string> readTreeFiles(const std::string& treeHash, const std::string& basePath = "");
 

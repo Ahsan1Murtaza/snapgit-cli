@@ -17,9 +17,6 @@
 using namespace std;
 namespace fs = filesystem;
 
-/**
- * @brief AddHandler operation.
- */
 AddHandler::AddHandler() {}
 
 /*
@@ -29,8 +26,8 @@ This function handles Add Command
     add file to staging area (Index File)
 */
 /**
- * @brief handleAdd operation.
- * @param filePath Parameter description.
+ * @brief Handles the  add command workflow.
+ * @param filePath Path to the target file relative to the repository root.
  */
 void AddHandler::handleAdd(const string& filePath) {
     if (!isRepoInitialized()) {

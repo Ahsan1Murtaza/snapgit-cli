@@ -5,8 +5,8 @@
 #define REPOCHECK_H
 
 /**
- * @brief isRepoInitialized operation.
- * @return Return value description.
+ * @brief Checks whether repo initialized.
+ * @return True when the check succeeds; otherwise false.
  */
 bool isRepoInitialized();
 
