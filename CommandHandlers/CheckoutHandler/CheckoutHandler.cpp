@@ -1,3 +1,6 @@
+#include "../../Helper/ReadIndex/ReadIndex.h"
+#include "../../Helper/ReadCommit/ReadCommit.h"
+#include "../../Helper/ReadTree/ReadTree.h"
 // SPDX-License-Identifier: MIT
 // Implementation for CheckoutHandler.
 
@@ -11,6 +14,9 @@
 #include <fstream>
 #include <filesystem>
 #include <algorithm>
+#include <sstream>
+#include "../../Helper/Hash/Hash.h"
+#include "../../Helper/Ignore.h"
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -49,6 +55,95 @@ void clearWorkingDirectory() {
  * @param refInput Branch name or commit hash to check out.
  */
 void CheckoutHandler::handleCheckout(const string& refInput) {
+        // Check for uncommitted changes (index vs HEAD commit tree)
+        string currentHead = getCurrentCommitHash();
+        if (!currentHead.empty()) {
+            CommitData headCommit = readCommit(currentHead);
+            if (!headCommit.treeHash.empty()) {
+                auto headTree = readTreeFiles(headCommit.treeHash);
+                auto indexEntries = readIndex();
+                bool dirty = false;
+                // Check for added/modified files
+                for (const auto& [file, hash] : indexEntries) {
+                    auto it = headTree.find(file);
+                    if (it == headTree.end() || it->second != hash) {
+                        dirty = true;
+                        break;
+                    }
+                }
+                // Check for deleted files
+                if (!dirty) {
+                    for (const auto& [file, hash] : headTree) {
+                        if (indexEntries.find(file) == indexEntries.end()) {
+                            dirty = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!dirty) {
+                    // Check if working directory has unstaged modifications
+                    auto ignorePatterns = readIgnorePatterns();
+                    fs::recursive_directory_iterator it("."), end;
+                    while (it != end && !dirty) {
+                        const fs::directory_entry& entry = *it;
+                        fs::path relPath = fs::relative(entry.path(), fs::current_path());
+                        string rel = relPath.generic_string();
+
+                        if (entry.is_directory()) {
+                            if (rel == ".mygit" || rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
+                                it.disable_recursion_pending();
+                            }
+                            ++it;
+                            continue;
+                        }
+
+                        if (!entry.is_regular_file()) {
+                            ++it;
+                            continue;
+                        }
+
+                        if (rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
+                            ++it;
+                            continue;
+                        }
+
+                        ifstream file(entry.path(), ios::binary);
+                        if (file) {
+                            stringstream buffer;
+                            buffer << file.rdbuf();
+                            string content = buffer.str();
+
+                            string blobData = "blob " + to_string(content.size()) + "\0" + content;
+                            string hash = sha1(blobData);
+
+                            auto idxIt = indexEntries.find(rel);
+                            // Untracked or unstaged change
+                            if (idxIt == indexEntries.end() || idxIt->second != hash) {
+                                dirty = true;
+                                break;
+                            }
+                        }
+                        ++it;
+                    }
+
+                    // Check for files deleted from working directory but present in index
+                    if (!dirty) {
+                        for (const auto& [file, hash] : indexEntries) {
+                            if (!fs::exists(file)) {
+                                dirty = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (dirty) {
+                    cerr << "Error: You have uncommitted changes. Please commit them before checking out another branch or commit.\n";
+                    return;
+                }
+            }
+        }
     // Check if repo exists
     if (!isRepoInitialized()) {
         cerr << "Error: Repository not initialized. Run 'mygit init' first.\n";
