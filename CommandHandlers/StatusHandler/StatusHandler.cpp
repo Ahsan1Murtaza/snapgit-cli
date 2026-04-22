@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for StatusHandler.
+
 #include "StatusHandler.h"
 #include "../../Helper/Hash/Hash.h"
 #include "../../Helper/ReadCommit/ReadCommit.h"
@@ -24,6 +27,11 @@ namespace fs = std::filesystem;
 // -----------------------------------------------------
 // READ WORKING DIRECTORY (ignore .mygit)
 // -----------------------------------------------------
+/**
+ * @brief readWorkingDirectory operation.
+ * @param ignorePatterns Parameter description.
+ * @return Return value description.
+ */
 unordered_map<string, string> readWorkingDirectory(const vector<string>& ignorePatterns) {
     unordered_map<string, string> result;
 
@@ -78,6 +86,9 @@ unordered_map<string, string> readWorkingDirectory(const vector<string>& ignoreP
 // -----------------------------------------------------
 // STATUS HANDLER
 // -----------------------------------------------------
+/**
+ * @brief handleStatus operation.
+ */
 void StatusHandler::handleStatus() {
     auto ignorePatterns = readIgnorePatterns();
     auto work = readWorkingDirectory(ignorePatterns);
@@ -216,6 +227,9 @@ void StatusHandler::handleStatus() {
 
     // Clean working tree message
     if (stagedNew.empty() && stagedModified.empty() && stagedDeleted.empty() &&
+        /**
+         * @brief modifiedNotStaged.empty operation.
+         */
         modifiedNotStaged.empty() && deletedNotStaged.empty() && untracked.empty()) {
         cout << "nothing to commit, working tree clean\n\n";
     } else if (untracked.size() && stagedNew.empty() && stagedModified.empty() && stagedDeleted.empty()) {

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for GetAllBranches.
+
 #include "GetAllBranches.h"
 #include <iostream>
 #include <filesystem>
@@ -6,6 +9,9 @@
 
 using namespace std;
 
+/**
+ * @brief getAllBranches operation.
+ */
 void getAllBranches() {
     string currentBranch = "";
 

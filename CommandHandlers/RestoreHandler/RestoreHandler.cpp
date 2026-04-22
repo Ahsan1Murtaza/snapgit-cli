@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for RestoreHandler.
+
 #include "RestoreHandler.h"
 #include "../../Helper/ReadIndex/ReadIndex.h"
 
@@ -12,6 +15,10 @@ namespace fs = std::filesystem;
 
 
 
+/**
+ * @brief handleRestore operation.
+ * @param filePath Parameter description.
+ */
 void RestoreHandler::handleRestore(const string& filePath) {
     auto index = readIndex();
 

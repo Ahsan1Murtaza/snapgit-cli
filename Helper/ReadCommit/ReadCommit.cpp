@@ -1,9 +1,17 @@
+// SPDX-License-Identifier: MIT
+// Implementation for ReadCommit.
+
 #include "ReadCommit.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
 using namespace std;
 
+/**
+ * @brief readCommit operation.
+ * @param commitHash Parameter description.
+ * @return Return value description.
+ */
 CommitData readCommit(const string& commitHash) {
     CommitData data;
     

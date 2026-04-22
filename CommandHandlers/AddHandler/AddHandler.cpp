@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for AddHandler.
+
 #include "AddHandler.h"
 #include "../../Objects/Blob/Blob.h"
 #include "../../Helper/RepoCheck/RepoCheck.h"
@@ -14,6 +17,9 @@
 using namespace std;
 namespace fs = filesystem;
 
+/**
+ * @brief AddHandler operation.
+ */
 AddHandler::AddHandler() {}
 
 /*
@@ -22,6 +28,10 @@ This function handles Add Command
     calls save
     add file to staging area (Index File)
 */
+/**
+ * @brief handleAdd operation.
+ * @param filePath Parameter description.
+ */
 void AddHandler::handleAdd(const string& filePath) {
     if (!isRepoInitialized()) {
         cerr << "Error: Repository not initialized.\n";

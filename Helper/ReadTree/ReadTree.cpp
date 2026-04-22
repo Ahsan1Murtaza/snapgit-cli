@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for ReadTree.
+
 #include "ReadTree.h"
 #include <filesystem>
 #include <fstream>
@@ -7,6 +10,12 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+/**
+ * @brief readTreeFiles operation.
+ * @param treeHash Parameter description.
+ * @param basePath Parameter description.
+ * @return Return value description.
+ */
 unordered_map<string, string> readTreeFiles(const string& treeHash, const string& basePath) {
     unordered_map<string, string> result;
     if (treeHash.empty()) return result;

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for GetCurrentCommitHash.
+
 #include "GetCurrentCommitHash.h"
 #include "../GetHeadRef/GetHeadRef.h"
 #include <iostream>
@@ -8,9 +11,24 @@
 
 using namespace std;
 
+/**
+ * @brief trim operation.
+ * @param s Parameter description.
+ * @return Return value description.
+ */
 static string trim(const string& s) {
+    /**
+     * @brief find_if_not operation.
+     * @param ch Parameter description.
+     * @return Return value description.
+     */
     auto start = find_if_not(s.begin(), s.end(), [](unsigned char ch) { return isspace(ch); });
     if (start == s.end()) return "";
+    /**
+     * @brief find_if_not operation.
+     * @param ch Parameter description.
+     * @return Return value description.
+     */
     auto end = find_if_not(s.rbegin(), s.rend(), [](unsigned char ch) { return isspace(ch); }).base();
     return string(start, end);
 }
@@ -19,6 +37,10 @@ static string trim(const string& s) {
 This function returns currentCommitHash
 if not present then return empty string
 */
+/**
+ * @brief getCurrentCommitHash operation.
+ * @return Return value description.
+ */
 string getCurrentCommitHash() {
     string currentBranchFile = getHeadRef();
 

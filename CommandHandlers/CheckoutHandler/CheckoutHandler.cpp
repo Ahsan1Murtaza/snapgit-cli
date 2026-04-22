@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for CheckoutHandler.
+
 #include "CheckoutHandler.h"
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include "../../Helper/GetHeadRef/GetHeadRef.h"
@@ -12,9 +15,15 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+/**
+ * @brief CheckoutHandler operation.
+ */
 CheckoutHandler::CheckoutHandler() {}
 
 // Helper function to clear working directory except .mygit
+/**
+ * @brief clearWorkingDirectory operation.
+ */
 void clearWorkingDirectory() {
     for (const auto& entry : fs::directory_iterator(".")) {
         string name = entry.path().filename().string();
@@ -38,6 +47,10 @@ void clearWorkingDirectory() {
     }
 }
 
+/**
+ * @brief handleCheckout operation.
+ * @param refInput Parameter description.
+ */
 void CheckoutHandler::handleCheckout(const string& refInput) {
     // Check if repo exists
     if (!isRepoInitialized()) {

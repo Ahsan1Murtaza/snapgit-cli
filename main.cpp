@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// CLI entrypoint and command dispatch.
+
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -21,6 +24,9 @@ using namespace std;
 /* Function to print help information
 Displays available commands and their descriptions to the user.
 */
+/**
+ * @brief printHelp operation.
+ */
 void printHelp() {
     cout << "SnapGit - A Simple git clone!\n\n";
     cout << "Available commands:\n";
@@ -40,16 +46,35 @@ void printHelp() {
     cout << "Use \"mygit <command> --help\" for more information on a specific command.\n";
 }
 
+/**
+ * @brief printCommandHelp operation.
+ * @param command Parameter description.
+ */
 void printCommandHelp(const std::string& command) {
 
+    /**
+     * @brief [&] operation.
+     * @param t Parameter description.
+     * @return Return value description.
+     */
     auto title = [&](const string& t){
         cout << t << "\n";
     };
 
+    /**
+     * @brief [&] operation.
+     * @param t Parameter description.
+     * @return Return value description.
+     */
     auto cmd = [&](const string& t){
         cout << "  " << t << "\n";
     };
 
+    /**
+     * @brief [&] operation.
+     * @param t Parameter description.
+     * @return Return value description.
+     */
     auto text = [&](const string& t){
         cout << "      " << t << "\n";
     };
@@ -137,6 +162,11 @@ void printCommandHelp(const std::string& command) {
     }
 }
 
+/**
+ * @brief main operation.
+ * @param argc Parameter description.
+ * @return Return value description.
+ */
 int main(int argc, char* argv[]) {
 
     InitHandler initHandler;       // Create an instance of InitHandler

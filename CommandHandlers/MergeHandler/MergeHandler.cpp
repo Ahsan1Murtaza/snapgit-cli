@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for MergeHandler.
+
 
 #include "MergeHandler.h"
 
@@ -29,6 +32,12 @@ namespace fs = std::filesystem;
   Helper: findCommonAncestor (simple walk up parents from A, then climb B until found)
   Works fine for typical DAGs. For very large repos you could optimize.
 */
+/**
+ * @brief findCommonAncestorSimple operation.
+ * @param a Parameter description.
+ * @param b Parameter description.
+ * @return Return value description.
+ */
 static string findCommonAncestorSimple(const string &a, const string &b) {
     if (a.empty() || b.empty()) return "";
 
@@ -62,6 +71,13 @@ static string findCommonAncestorSimple(const string &a, const string &b) {
     <other content>
     >>>>>>> otherBranch
 */
+/**
+ * @brief writeConflictMarkers operation.
+ * @param path Parameter description.
+ * @param currentHash Parameter description.
+ * @param otherHash Parameter description.
+ * @param otherBranchName Parameter description.
+ */
 static void writeConflictMarkers(const string& path, const string& currentHash, const string& otherHash, const string& otherBranchName) {
     string curBlob = ".mygit/objects/" + currentHash.substr(0,2) + "/" + currentHash.substr(2);
     string othBlob = ".mygit/objects/" + otherHash.substr(0,2) + "/" + otherHash.substr(2);
@@ -103,6 +119,10 @@ static void writeConflictMarkers(const string& path, const string& currentHash, 
   Helper: updateIndexFromTree
   Write index in your repository format: "path hash"
 */
+/**
+ * @brief updateIndexFromTree operation.
+ * @param treeHash Parameter description.
+ */
 static void updateIndexFromTree(const string& treeHash) {
     auto files = readTreeFiles(treeHash);
     ofstream idx(".mygit/index", ios::trunc);
@@ -120,6 +140,10 @@ static void updateIndexFromTree(const string& treeHash) {
   Main merge handler
   otherBranch: branch name (e.g., "feature-b")
 */
+/**
+ * @brief handleMerge operation.
+ * @param otherBranch Parameter description.
+ */
 void MergeHandler::handleMerge(const string& otherBranch) {
     if (!isRepoInitialized()) {
         cerr << "Error: Repository not initialized.\n";

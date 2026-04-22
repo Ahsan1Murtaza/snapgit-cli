@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for InitHandler.
+
 #include "InitHandler.h"
 
 #include <iostream>
@@ -11,6 +14,9 @@ using namespace std;
 
 
 // Constructor
+/**
+ * @brief InitHandler operation.
+ */
 InitHandler::InitHandler() {}
 
 
@@ -19,6 +25,11 @@ InitHandler::InitHandler() {}
 /* Function to check if a directory exists 
 Returns true if the directory exists, false otherwise.
 */
+/**
+ * @brief dirExists operation.
+ * @param path Parameter description.
+ * @return Return value description.
+ */
 bool InitHandler::dirExists(const string& path) {
 
     return std::filesystem::exists(path) && std::filesystem::is_directory(path);
@@ -31,6 +42,11 @@ bool InitHandler::dirExists(const string& path) {
 /* Function to create a directory 
 Returns true if the directory was created successfully or already exists, false otherwise.
 */
+/**
+ * @brief createDir operation.
+ * @param path Parameter description.
+ * @return Return value description.
+ */
 bool InitHandler::createDir(const string& path) {
     
     return filesystem::create_directories(path);
@@ -52,6 +68,9 @@ Folder structure created:
         heads/
             main
 */
+/**
+ * @brief handleInit operation.
+ */
 void InitHandler::handleInit() {
 
     // Check if .mygit directory already exists

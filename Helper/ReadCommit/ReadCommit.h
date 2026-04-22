@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Declarations for ReadCommit.
+
 #ifndef READCOMMIT_H
 #define READCOMMIT_H
 
@@ -13,6 +16,11 @@ struct CommitData {
     string message;
 };
 
+/**
+ * @brief readCommit operation.
+ * @param commitHash Parameter description.
+ * @return Return value description.
+ */
 CommitData readCommit(const string& commitHash);
 
 #endif

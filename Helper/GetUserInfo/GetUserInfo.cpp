@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for GetUserInfo.
+
 #include "GetUserInfo.h"
 #include <fstream>
 #include <iostream>
@@ -7,6 +10,10 @@
 
 using namespace std;
 
+/**
+ * @brief getUserInfoFromConfig operation.
+ * @return Return value description.
+ */
 pair<string, string> getUserInfoFromConfig() {
     ifstream configFile(".mygit/config");
     if (!configFile) {
@@ -28,7 +35,16 @@ pair<string, string> getUserInfoFromConfig() {
     }
 
     // --- Universal trim (handles spaces, tabs, carriage returns, newlines) ---
+    /**
+     * @brief [] operation.
+     * @param s Parameter description.
+     * @return Return value description.
+     */
     auto trim = [](string &s) {
+        /**
+         * @brief s.erase operation.
+         * @param ch Parameter description.
+         */
         s.erase(remove_if(s.begin(), s.end(), [](unsigned char ch) {
             return ch == '\r' || ch == '\n' || isspace(ch);
         }), s.end());

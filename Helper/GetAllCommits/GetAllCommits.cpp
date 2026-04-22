@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for GetAllCommits.
+
 #include "GetAllCommits.h"
 #include <fstream>
 #include <sstream>
@@ -11,6 +14,11 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+/**
+ * @brief readFile operation.
+ * @param path Parameter description.
+ * @return Return value description.
+ */
 static string readFile(const string &path) {
     ifstream f(path, ios::binary);
     if (!f.is_open()) return "";
@@ -20,6 +28,11 @@ static string readFile(const string &path) {
 }
 
 // Try object path resolution: xx/yyyy... or flat
+/**
+ * @brief getObjectPath operation.
+ * @param hash Parameter description.
+ * @return Return value description.
+ */
 static string getObjectPath(const string &hash) {
     if (hash.size() >= 3) {
         string p = ".mygit/objects/" + hash.substr(0,2) + "/" + hash.substr(2);
@@ -30,6 +43,11 @@ static string getObjectPath(const string &hash) {
 }
 
 // Trim trailing and leading whitespace
+/**
+ * @brief trim operation.
+ * @param s Parameter description.
+ * @return Return value description.
+ */
 static string trim(const string &s) {
     size_t i = 0, j = s.size();
     while (i < j && isspace((unsigned char)s[i])) ++i;
@@ -38,6 +56,12 @@ static string trim(const string &s) {
     return s.substr(i, j - i);
 }
 
+/**
+ * @brief parseCommitFile operation.
+ * @param commitHash Parameter description.
+ * @param info Parameter description.
+ * @return Return value description.
+ */
 static bool parseCommitFile(const string &commitHash, CommitInfo &info) {
     string path = getObjectPath(commitHash);
 
@@ -83,6 +107,11 @@ static bool parseCommitFile(const string &commitHash, CommitInfo &info) {
 }
 
 
+/**
+ * @brief getAllCommits operation.
+ * @param headCommitHash Parameter description.
+ * @return Return value description.
+ */
 vector<CommitInfo> getAllCommits(const string &headCommitHash) {
     vector<CommitInfo> result;
     

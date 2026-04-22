@@ -10,6 +10,25 @@ SnapGit is a compact, readable implementation of a version-control system writte
 
 ---
 
+**Commenting Standard (Doxygen + SPDX)**
+- **File header (required for every `*.h` and `*.cpp`):**
+  - First line must be: `// SPDX-License-Identifier: MIT`
+  - Follow with a short file-purpose comment.
+- **Function comment (required):**
+  - Use Doxygen block comments (`/** ... */`) above each function declaration cmake -S . -B build
+cmake --build buildin headers.
+  - For internal/helper functions defined only in `.cpp`, add Doxygen block above the definition.
+- **Required Doxygen tags:**
+  - `@brief` for all functions.
+  - `@param` for every parameter.
+  - `@return` for non-`void` functions.
+- **Optional Doxygen tags:**
+  - `@note` for side effects, assumptions, edge cases, or behavior worth calling out.
+- **Quality rule:**
+  - Comments should explain intent/behavior, not restate obvious syntax.
+
+---
+
 **Scope & Audience**
 - **Scope:** core VCS primitives — `init`, `add`, `commit`, `branch`, `checkout`, `merge`, `status`, `log`, `reset`, `restore`. Uses a simple object store and plain-text index to show how snapshots and references are managed.
 - **Audience:** beginners and developers who want to understand what commits, snapshots, branches, merges, and conflicts actually do behind the scenes. Perfect for learners who run Git commands today without understanding their effects.

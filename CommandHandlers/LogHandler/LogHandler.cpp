@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for LogHandler.
+
 #include "LogHandler.h"
 #include "../../Helper/GetAllCommits/GetAllCommits.h"
 #include "../../Helper/RepoCheck/RepoCheck.h"
@@ -7,6 +10,9 @@
 
 using namespace std;
 
+/**
+ * @brief handleLog operation.
+ */
 void LogHandler::handleLog() {
     if (!isRepoInitialized()) {
         cerr << "Error: Repository not initialized. Run 'init' first.\n";

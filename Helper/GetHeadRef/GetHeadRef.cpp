@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for GetHeadRef.
+
 #include "GetHeadRef.h"
 
 #include <iostream>
@@ -7,6 +10,10 @@
 using namespace std;
 
 
+/**
+ * @brief getHeadRef operation.
+ * @return Return value description.
+ */
 string getHeadRef() {
     ifstream headFile(".mygit/HEAD");
 

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for CommitHandler.
+
 #include "CommitHandler.h"
 #include "../../Objects/Tree/Tree.h"
 #include "../../Objects/Commit/Commit.h"
@@ -15,6 +18,9 @@
 
 using namespace std;
 
+/**
+ * @brief CommitHandler operation.
+ */
 CommitHandler::CommitHandler() {};
 
 /*

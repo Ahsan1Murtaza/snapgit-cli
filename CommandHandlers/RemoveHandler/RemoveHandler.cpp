@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for RemoveHandler.
+
 #include "RemoveHandler.h"
 #include "../../Helper/ReadIndex/ReadIndex.h"
 
@@ -9,6 +12,11 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+/**
+ * @brief handleRemove operation.
+ * @param filePath Parameter description.
+ * @param cached Parameter description.
+ */
 void RemoveHandler::handleRemove(const string& filePath, bool cached) {
     auto index = readIndex();
 

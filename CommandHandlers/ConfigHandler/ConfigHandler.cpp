@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for ConfigHandler.
+
 #include "ConfigHandler.h"
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include <fstream>
@@ -6,6 +9,11 @@
 #include <filesystem>
 using namespace std;
 
+/**
+ * @brief handleConfig operation.
+ * @param name Parameter description.
+ * @param email Parameter description.
+ */
 void ConfigHandler::handleConfig(const string& name, const string& email) {
     namespace fs = std::filesystem;
     

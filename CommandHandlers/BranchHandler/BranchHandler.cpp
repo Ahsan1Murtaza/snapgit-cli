@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Implementation for BranchHandler.
+
 #include "BranchHandler.h"
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include "../../Helper/GetAllBranches/GetAllBranches.h"
@@ -7,6 +10,10 @@
 
 using namespace std;
 
+/**
+ * @brief handleBranch operation.
+ * @param branchName Parameter description.
+ */
 void BranchHandler::handleBranch(const string &branchName) {
     if (!isRepoInitialized()) {
         cerr << "Error: Repository not initialized. Run 'mygit init' first.\n";
