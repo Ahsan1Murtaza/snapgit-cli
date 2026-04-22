@@ -75,8 +75,10 @@ void CommitHandler::handleCommit(const string &message)
        }
     }
 
-    Commit commit(tree.getHash(), parents, message, name, email);
 
+    // Get current time as unix timestamp
+    long long now = static_cast<long long>(time(nullptr));
+    Commit commit(tree.getHash(), parents, message, name, email, now);
     commit.save();
     updateHead(commit.getHash());
 

@@ -296,7 +296,8 @@ void MergeHandler::handleMerge(const string& otherBranch) {
     // Create merge commit with two parents
     auto [name, email] = getUserInfoFromConfig();
     vector<string> parents = { currentHead, otherHead };
-    Commit mergeCommit(mergedTreeHash, parents, string("Merge branch '") + otherBranch + "'", name, email);
+    long long now = static_cast<long long>(time(nullptr));
+    Commit mergeCommit(mergedTreeHash, parents, string("Merge branch '") + otherBranch + "'", name, email, now);
     mergeCommit.save();
     string mergeHash = mergeCommit.getHash();
 

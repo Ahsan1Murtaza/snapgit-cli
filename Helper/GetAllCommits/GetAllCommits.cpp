@@ -76,6 +76,7 @@ static bool parseCommitFile(const string &commitHash, CommitInfo &info) {
     info.author.clear();
     info.email.clear();
     info.message.clear();
+    info.timestamp = 0;
 
     while (getline(ss, line)) {
         if (!line.empty() && line.back() == '\r') line.pop_back();
@@ -89,17 +90,25 @@ static bool parseCommitFile(const string &commitHash, CommitInfo &info) {
                 info.parents.push_back(ph);
             }
         }
-
         else if (line.rfind("author ", 0) == 0) {
             info.author = trim(line.substr(7));
         }
         else if (line.rfind("email ", 0) == 0) {
             info.email = trim(line.substr(6));
         }
+        else if (line.rfind("timestamp ", 0) == 0) {
+            string ts = trim(line.substr(10));
+            if (!ts.empty()) {
+                try {
+                    info.timestamp = stoll(ts);
+                } catch (...) {
+                    info.timestamp = 0;
+                }
+            }
+        }
         else if (line.rfind("message ", 0) == 0) {
             info.message = trim(line.substr(8));
         }
-
         // ignore unknown lines
     }
 

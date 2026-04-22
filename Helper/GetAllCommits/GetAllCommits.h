@@ -14,6 +14,7 @@ struct CommitInfo {
     vector<string> parents; // Supports multi parents
     string author;
     string email;
+    long long timestamp = 0;
     string message;
 };
 

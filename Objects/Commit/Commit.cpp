@@ -14,7 +14,8 @@ using namespace std;
 namespace fs = std::filesystem;
 
 
-Commit::Commit(const string& treeHash, const vector<string>& parentHashes, const string& message, const string& author, const string& email) : Object("commit"), treeHash(treeHash), parentHashes(parentHashes), message(message), author(author), email(email) {}
+Commit::Commit(const string& treeHash, const vector<string>& parentHashes, const string& message, const string& author, const string& email, long long timestamp)
+    : Object("commit"), treeHash(treeHash), parentHashes(parentHashes), message(message), author(author), email(email), timestamp(timestamp) {}
 
 /**
  * @brief Performs save.
@@ -26,7 +27,6 @@ void Commit::save() {
 
     // Multiple Parent Support
     for (const auto& parent: parentHashes) {
-
         if (!parent.empty()) {
             content << "parent " << parent << "\n";
         }
@@ -34,6 +34,7 @@ void Commit::save() {
 
     content << "author " << author << "\n";
     content << "email " << email << "\n";
+    content << "timestamp " << timestamp << "\n";
     content << "message " << message << "\n";
 
     string commitContent = content.str();

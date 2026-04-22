@@ -6,7 +6,9 @@
 #include "../../Helper/RepoCheck/RepoCheck.h"
 #include "../../Helper/GetHeadRef/GetHeadRef.h"     
 #include "../../Helper/GetCurrentCommitHash/GetCurrentCommitHash.h" 
+
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -26,11 +28,21 @@ void LogHandler::handleLog() {
     }
 
     auto commits = getAllCommits(headCommit);
+    // Sort by timestamp descending (most recent first)
+    sort(commits.begin(), commits.end(), [](const CommitInfo& a, const CommitInfo& b) {
+        return a.timestamp > b.timestamp;
+    });
     for (auto &c : commits) {
         cout << "commit " << c.hash << "\n";
         cout << "Author: " << c.author;
         if (!c.email.empty()) cout << " <" << c.email << ">";
         cout << "\n";
+        if (c.timestamp > 0) {
+            time_t t = static_cast<time_t>(c.timestamp);
+            char buf[64];
+            strftime(buf, sizeof(buf), "%a %b %d %H:%M:%S %Y", localtime(&t));
+            cout << "Date:   " << buf << "\n";
+        }
         cout << "\n    " << c.message << "\n\n";
     }
 }
