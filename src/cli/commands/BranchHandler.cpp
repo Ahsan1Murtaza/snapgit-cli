@@ -18,7 +18,7 @@ using namespace std;
  */
 void BranchHandler::handleBranch(const string &branchName) {
     if (!isRepoInitialized()) {
-        cerr << "Error: Repository not initialized. Run 'mygit init' first.\n";
+        cerr << "Error: Repository not initialized. Run 'snapgit init' first.\n";
         return;
     }
 
@@ -29,7 +29,7 @@ void BranchHandler::handleBranch(const string &branchName) {
     }
 
     
-    string branchPath = ".mygit/refs/heads/" + branchName;
+    string branchPath = ".snapgit/refs/heads/" + branchName;
 
     if (filesystem::exists(branchPath)) {
         cerr << "Error: Branch '" << branchName << "' already exists.\n";
@@ -37,7 +37,7 @@ void BranchHandler::handleBranch(const string &branchName) {
     }
 
    
-    ifstream headFile(".mygit/HEAD");
+    ifstream headFile(".snapgit/HEAD");
     string headContent;
     getline(headFile, headContent);
     headFile.close();
@@ -45,7 +45,7 @@ void BranchHandler::handleBranch(const string &branchName) {
     string currentCommit;
     if (headContent.rfind("ref:", 0) == 0) {
        
-        string branchRef = ".mygit/" + headContent.substr(5);
+        string branchRef = ".snapgit/" + headContent.substr(5);
         ifstream branchRefFile(branchRef);
         getline(branchRefFile, currentCommit);
         branchRefFile.close();

@@ -48,7 +48,7 @@ void Commit::save() {
     hash = sha1(commitContent);
 
 
-    string folder = ".mygit/objects/" + hash.substr(0, 2);
+    string folder = ".snapgit/objects/" + hash.substr(0, 2);
     string file = folder + "/" + hash.substr(2);
 
     fs::create_directories(folder);

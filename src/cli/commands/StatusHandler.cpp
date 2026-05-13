@@ -10,6 +10,7 @@
 #include "../utils/ReadIndex.h"
 #include "../utils/ReadTree.h"
 #include "../utils/Ignore.h"
+#include "../utils/RepoCheck.h"
 
 
 #include <iostream>
@@ -27,7 +28,7 @@ namespace fs = std::filesystem;
 
 
 // -----------------------------------------------------
-// READ WORKING DIRECTORY (ignore .mygit)
+// READ WORKING DIRECTORY (ignore .snapgit)
 // -----------------------------------------------------
 /**
  * @brief Reads working directory from repository storage.
@@ -44,7 +45,7 @@ unordered_map<string, string> readWorkingDirectory(const vector<string>& ignoreP
         string rel = relPath.generic_string();
 
         if (entry.is_directory()) {
-            if (rel == ".mygit" || rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
+            if (rel == ".snapgit" || rel.rfind(".snapgit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
                 it.disable_recursion_pending();
             }
             ++it;
@@ -56,7 +57,7 @@ unordered_map<string, string> readWorkingDirectory(const vector<string>& ignoreP
             continue;
         }
 
-        if (rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
+        if (rel.rfind(".snapgit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
             ++it;
             continue;
         }
@@ -92,6 +93,12 @@ unordered_map<string, string> readWorkingDirectory(const vector<string>& ignoreP
  * @brief Handles the  status command workflow.
  */
 void StatusHandler::handleStatus() {
+
+    if (!isRepoInitialized()) {
+        cerr << "Error: Repository not initialized. Run 'snapgit init' first.\n";
+        return;
+    }
+
     auto ignorePatterns = readIgnorePatterns();
     auto work = readWorkingDirectory(ignorePatterns);
     auto index = readIndex();
@@ -169,25 +176,6 @@ void StatusHandler::handleStatus() {
 
     }
 
-       // DEBUGGING PURPOSE ONLY
-//    // Print HEAD
-//    cout << "=== HEAD Files ===\n";
-//    for (auto& [path, hash] : headFiles) {
-//        cout << path << " : " << hash << "\n";
-//    }
-//
-//    // Print INDEX
-//    cout << "=== INDEX Files ===\n";
-//    for (auto& [path, hash] : index) {
-//        cout << path << " : " << hash << "\n";
-//    }
-//
-//    // Print WORKDIR
-//    cout << "=== WORKDIR Files ===\n";
-//    for (auto& [path, hash] : work) {
-//        cout << path << " : " << hash << "\n";
-//    }
-
 
     // -----------------------------------------------------
     // PRINT (Git style)
@@ -203,7 +191,7 @@ void StatusHandler::handleStatus() {
     // Changes to be committed
     if (!stagedNew.empty() || !stagedModified.empty() || !stagedDeleted.empty()) {
         cout << "Changes to be committed:\n";
-        cout << "  (use \"mygit restore <file>...\" to unstage)\n\n";
+        cout << "  (use \"snapgit restore <file>...\" to unstage)\n\n";
         for (auto &p : stagedNew)      cout << "    new file: " << p << "\n";
         for (auto &p : stagedModified) cout << "    modified: " << p << "\n";
         for (auto &p : stagedDeleted)  cout << "    deleted: " << p << "\n";
@@ -213,8 +201,8 @@ void StatusHandler::handleStatus() {
     // Changes not staged for commit
     if (!modifiedNotStaged.empty() || !deletedNotStaged.empty()) {
         cout << "Changes not staged for commit:\n";
-        cout << "  (use \"mygit rm <file> or mygit rm --cached <file>\" to update what will be committed)\n";
-        cout << "  (use \"mygit restore <file>...\" to discard changes in working directory)\n\n";
+        cout << "  (use \"snapgit rm <file> or snapgit rm --cached <file>\" to update what will be committed)\n";
+        cout << "  (use \"snapgit restore <file>...\" to discard changes in working directory)\n\n";
         for (auto &p : modifiedNotStaged) cout << "    modified: " << p << "\n";
         for (auto &p : deletedNotStaged)  cout << "    deleted: " << p << "\n";
         cout << "\n\n";
@@ -222,7 +210,7 @@ void StatusHandler::handleStatus() {
 
     if (!untracked.empty()) {
         cout << "Untracked files:\n";
-        cout << "  (use \"mygit add <file>...\" to include in what will be committed)\n\n";
+        cout << "  (use \"snapgit add <file>...\" to include in what will be committed)\n\n";
         for (auto &p : untracked) cout << "    " << p << "\n";
         cout << "\n\n";
     }

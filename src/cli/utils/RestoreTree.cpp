@@ -22,7 +22,7 @@ vector<pair<string, string>> indexEntries;
  * @param basePath Base path used while walking tree entries.
  */
 void restoreTree(const string& treeHash, const string& basePath) {
-    string folder = ".mygit/objects/" + treeHash.substr(0, 2);
+    string folder = ".snapgit/objects/" + treeHash.substr(0, 2);
     string file = folder + "/" + treeHash.substr(2);
     
     ifstream in(file);
@@ -46,7 +46,7 @@ void restoreTree(const string& treeHash, const string& basePath) {
         
         if (type == "blob") {
             // Restore file from blob
-            string blobFolder = ".mygit/objects/" + hash.substr(0, 2);
+            string blobFolder = ".snapgit/objects/" + hash.substr(0, 2);
             string blobFile = blobFolder + "/" + hash.substr(2);
             
             ifstream blobIn(blobFile, ios::binary);
@@ -84,7 +84,7 @@ void restoreTree(const string& treeHash, const string& basePath) {
  * @brief Writes index file to repository storage.
  */
 void writeIndexFile() {
-    ofstream indexFile(".mygit/index");
+    ofstream indexFile(".snapgit/index");
     for (const auto& entry : indexEntries) {
         indexFile << entry.first << " " << entry.second << "\n";
     }

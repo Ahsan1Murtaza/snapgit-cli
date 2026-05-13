@@ -17,9 +17,9 @@ using namespace std;
  * @return Requested string value.
  */
 pair<string, string> getUserInfoFromConfig() {
-    ifstream configFile(".mygit/config");
+    ifstream configFile(".snapgit/config");
     if (!configFile) {
-        cerr << "Error: Config file not found. Run 'mygit init' first.\n";
+        cerr << "Error: Config file not found. Run 'snapgit init' first.\n";
         return {"", ""};
     }
 

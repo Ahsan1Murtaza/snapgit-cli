@@ -57,7 +57,7 @@ bool InitHandler::createDir(const string& path) {
 Initializes a new Git repository by creating the necessary directory structure and files.
 
 Folder structure created:
-.mygit/
+.snapgit/
     HEAD
     index
     objects/
@@ -70,23 +70,23 @@ Folder structure created:
  */
 void InitHandler::handleInit() {
 
-    // Check if .mygit directory already exists
-    if (dirExists(".mygit")) {
-        cout << "Reinitialized existing Git repository in .mygit/\n";
+    // Check if .snapgit directory already exists
+    if (dirExists(".snapgit")) {
+        cout << "Reinitialized existing Git repository in .snapgit/\n";
         return;
     }
 
-    // Create .mygit directory
+    // Create .snapgit directory
 
-    if (!createDir(".mygit")) {
-        cerr << "Error: Failed to create .mygit directory\n";
+    if (!createDir(".snapgit")) {
+        cerr << "Error: Failed to create .snapgit directory\n";
         return;
     }
 
-    // // Create HEAD and index files inside .mygit
+    // // Create HEAD and index files inside .snapgit
 
     // // Create HEAD file
-    ofstream headFile(".mygit/HEAD");
+    ofstream headFile(".snapgit/HEAD");
     if (!headFile) {
         cerr << "Error: Failed to create HEAD file\n";
         return;
@@ -96,7 +96,7 @@ void InitHandler::handleInit() {
 
 
     // // Create empty index file
-    ofstream indexFile(".mygit/index");
+    ofstream indexFile(".snapgit/index");
     if (!indexFile) {
         cerr << "Error: Failed to create index file\n";
         return;
@@ -105,23 +105,23 @@ void InitHandler::handleInit() {
 
 
 
-    // // Create subdirectories in .mygit
+    // // Create subdirectories in .snapgit
     // // 1. Objects
     // // 2. Refs
     // // 3. Refs/heads
 
-    createDir(".mygit/objects");
-    createDir(".mygit/refs/heads");
+    createDir(".snapgit/objects");
+    createDir(".snapgit/refs/heads");
     
-    // // createDir(".mygit\\info");
-    // // createDir(".mygit\\hooks");
+    // // createDir(".snapgit\\info");
+    // // createDir(".snapgit\\hooks");
     
     
 
     // // Create sub file (main) in refs/heads
 
     // // Create refs/heads/main file
-    ofstream headsFile(".mygit/refs/heads/main");
+    ofstream headsFile(".snapgit/refs/heads/main");
     if (!headsFile) {
         cerr << "Error: Failed to create refs/heads/main file\n";
         return;
@@ -129,7 +129,7 @@ void InitHandler::handleInit() {
     headsFile.close();
 
     //Create Config File
-    ofstream configFile(".mygit/config");
+    ofstream configFile(".snapgit/config");
     configFile << "[user]\n";
     configFile << "    name = \n";
     configFile << "    email = \n";
@@ -154,7 +154,7 @@ void InitHandler::handleInit() {
     // Optionally, create other standard files like config, description, exclude
 
 
-    // ofstream configFile(".mygit\\config");
+    // ofstream configFile(".snapgit\\config");
     // if (configFile) {
     //     configFile << "[core]\n";
     //     configFile << "\trepositoryformatversion = 0\n";
@@ -166,20 +166,20 @@ void InitHandler::handleInit() {
     //     configFile.close();
     // }
 
-    // ofstream descFile(".mygit\\description");
+    // ofstream descFile(".snapgit\\description");
     // if (descFile) {
     //     descFile << "Unnamed repository; edit this file 'description' to name the repository.\n";
     //     descFile.close();
     // }
 
-    // ofstream excludeFile(".mygit\\info\\exclude");
+    // ofstream excludeFile(".snapgit\\info\\exclude");
     // if (excludeFile) {
-    //     excludeFile << "# git ls-files --others --exclude-from=.mygit/info/exclude\n";
+    //     excludeFile << "# git ls-files --others --exclude-from=.snapgit/info/exclude\n";
     //     excludeFile << "# Lines that start with '#' are comments.\n";
     //     excludeFile << "# *.[oa]\n";
     //     excludeFile << "# *~\n";
     //     excludeFile.close();
     // }
 
-    cout << "Initialized empty Git repository in .mygit/\n";
+    cout << "Initialized empty Git repository in .snapgit/\n";
 }

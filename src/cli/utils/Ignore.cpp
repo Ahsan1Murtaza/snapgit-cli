@@ -19,7 +19,7 @@ namespace fs = std::filesystem;
  */
 vector<string> readIgnorePatterns() {
     vector<string> patterns;
-    ifstream ignoreFile(".mygitignore");
+    ifstream ignoreFile(".snapgitignore");
     string line;
 
     while (getline(ignoreFile, line)) {

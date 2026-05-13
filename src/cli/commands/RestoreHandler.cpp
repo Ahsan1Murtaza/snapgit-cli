@@ -30,7 +30,7 @@ void RestoreHandler::handleRestore(const string& filePath) {
     }
 
     string hash = index[filePath];
-    string objFolder = ".mygit/objects/" + hash.substr(0, 2);
+    string objFolder = ".snapgit/objects/" + hash.substr(0, 2);
     string objFile = objFolder + "/" + hash.substr(2);
 
     if (!fs::exists(objFile)) {

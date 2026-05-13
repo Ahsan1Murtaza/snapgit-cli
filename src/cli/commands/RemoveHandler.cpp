@@ -31,7 +31,7 @@ void RemoveHandler::handleRemove(const string& filePath, bool cached) {
     index.erase(filePath);
 
     // Write updated index back
-    ofstream out(".mygit/index", ios::trunc);
+    ofstream out(".snapgit/index", ios::trunc);
     if (!out) {
         cerr << "Error: Could not open index file for writing\n";
         return;

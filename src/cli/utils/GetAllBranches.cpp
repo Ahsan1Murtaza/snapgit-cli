@@ -17,7 +17,7 @@ using namespace std;
 void getAllBranches() {
     string currentBranch = "";
 
-    ifstream headFile(".mygit/HEAD");
+    ifstream headFile(".snapgit/HEAD");
     string headContent;
     getline(headFile, headContent);
     headFile.close();
@@ -27,7 +27,7 @@ void getAllBranches() {
     }
 
     cout << "Branches:\n";
-    for (const auto &entry : filesystem::directory_iterator(".mygit/refs/heads")) {
+    for (const auto &entry : filesystem::directory_iterator(".snapgit/refs/heads")) {
         string branchName = entry.path().filename().string();
         if (branchName == currentBranch)
             cout << "* " << branchName << "\n";

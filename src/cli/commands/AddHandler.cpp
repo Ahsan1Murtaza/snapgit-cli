@@ -39,7 +39,7 @@ void AddHandler::handleAdd(const string& filePath) {
 
     // Read current index
     unordered_map<string, string> indexMap;
-    ifstream indexIn(".mygit/index");
+    ifstream indexIn(".snapgit/index");
     string line;
     while (getline(indexIn, line)) {
         istringstream iss(line);
@@ -68,7 +68,7 @@ void AddHandler::handleAdd(const string& filePath) {
             string rel = relPath.generic_string();
 
             if (entry.is_directory()) {
-                if (rel == ".mygit" || rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
+                if (rel == ".snapgit" || rel.rfind(".snapgit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
                     it.disable_recursion_pending();
                 }
                 ++it;
@@ -80,7 +80,7 @@ void AddHandler::handleAdd(const string& filePath) {
                 continue;
             }
 
-            if (rel == ".mygitignore") {
+            if (rel == ".snapgitignore") {
                 filesToStage.push_back(entry.path());
                 ++it;
                 continue;
@@ -100,14 +100,14 @@ void AddHandler::handleAdd(const string& filePath) {
             string rel = relPath.generic_string();
 
             if (entry.is_directory()) {
-                if (rel == ".mygit" || rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
+                if (rel == ".snapgit" || rel.rfind(".snapgit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
                     it.disable_recursion_pending();
                 }
                 ++it;
                 continue;
             }
 
-            if (entry.is_regular_file() && rel.rfind(".mygit/", 0) != 0 && !isIgnoredPath(rel, ignorePatterns)) {
+            if (entry.is_regular_file() && rel.rfind(".snapgit/", 0) != 0 && !isIgnoredPath(rel, ignorePatterns)) {
                 filesToStage.push_back(entry.path());
             }
             ++it;
@@ -121,7 +121,7 @@ void AddHandler::handleAdd(const string& filePath) {
         string rel = relPath.generic_string();
         for (char& c : rel) if (c == '\\') c = '/';
 
-        if (rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
+        if (rel.rfind(".snapgit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
             continue;
         }
 
@@ -139,7 +139,7 @@ void AddHandler::handleAdd(const string& filePath) {
     }
 
     // Write back index
-    ofstream indexOut(".mygit/index", ios::trunc);
+    ofstream indexOut(".snapgit/index", ios::trunc);
     for (auto& [path, hash] : indexMap) {
         indexOut << path << " " << hash << "\n";
     }

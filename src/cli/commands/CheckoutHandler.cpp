@@ -25,7 +25,7 @@ namespace fs = std::filesystem;
 
 CheckoutHandler::CheckoutHandler() {}
 
-// Helper function to clear working directory except .mygit
+// Helper function to clear working directory except .snapgit
 /**
  * @brief Performs clear working directory.
  */
@@ -33,8 +33,8 @@ void clearWorkingDirectory() {
     for (const auto& entry : fs::directory_iterator(".")) {
         string name = entry.path().filename().string();
         
-        // Skip .mygit folder
-        if (name == ".mygit" || name == ".git") {
+        // Skip .snapgit folder
+        if (name == ".snapgit" || name == ".git") {
             continue;
         }
         
@@ -93,7 +93,7 @@ void CheckoutHandler::handleCheckout(const string& refInput) {
                         string rel = relPath.generic_string();
 
                         if (entry.is_directory()) {
-                            if (rel == ".mygit" || rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
+                            if (rel == ".snapgit" || rel.rfind(".snapgit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
                                 it.disable_recursion_pending();
                             }
                             ++it;
@@ -105,7 +105,7 @@ void CheckoutHandler::handleCheckout(const string& refInput) {
                             continue;
                         }
 
-                        if (rel.rfind(".mygit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
+                        if (rel.rfind(".snapgit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
                             ++it;
                             continue;
                         }
@@ -148,7 +148,7 @@ void CheckoutHandler::handleCheckout(const string& refInput) {
         }
     // Check if repo exists
     if (!isRepoInitialized()) {
-        cerr << "Error: Repository not initialized. Run 'mygit init' first.\n";
+        cerr << "Error: Repository not initialized. Run 'snapgit init' first.\n";
         return;
     }
     
@@ -160,7 +160,7 @@ void CheckoutHandler::handleCheckout(const string& refInput) {
 
     if (isHash) {
         // Checkout by Commit hash
-        string commitPath = ".mygit/objects/" + refInput.substr(0,2) + "/" + refInput.substr(2);
+        string commitPath = ".snapgit/objects/" + refInput.substr(0,2) + "/" + refInput.substr(2);
         if (!fs::exists(commitPath)) {
             cerr << "Error: Commit hash '" << refInput << "' not found.\n";
             return;
@@ -171,7 +171,7 @@ void CheckoutHandler::handleCheckout(const string& refInput) {
     else{
         // Checkout by Branch name
         targetRef = "refs/heads/" + refInput;
-        string branchPath = ".mygit/" + targetRef;
+        string branchPath = ".snapgit/" + targetRef;
         if (!fs::exists(branchPath)) {
             cerr << "Error: Branch '" << refInput << "' does not exist.\n";
             return;
@@ -203,18 +203,18 @@ void CheckoutHandler::handleCheckout(const string& refInput) {
     
     // Update HEAD
     if (isHash) {
-        ofstream head(".mygit/HEAD", ios::trunc);
+        ofstream head(".snapgit/HEAD", ios::trunc);
         if (!head.is_open()) {
-            cerr << "Error: Could not open .mygit/HEAD for writing" << endl;
+            cerr << "Error: Could not open .snapgit/HEAD for writing" << endl;
             return;
         }
         head << targetCommitHash;
         head.close();
     }
     else {
-        ofstream head(".mygit/HEAD", ios::trunc);
+        ofstream head(".snapgit/HEAD", ios::trunc);
         if (!head.is_open()) {
-            cerr << "Error: Could not open .mygit/HEAD for writing" << endl;
+            cerr << "Error: Could not open .snapgit/HEAD for writing" << endl;
             return;
         }
         head << "ref: " + targetRef;

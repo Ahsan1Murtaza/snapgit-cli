@@ -15,6 +15,6 @@ using namespace std;
  * @param basePath Base path used while walking tree entries.
  */
 void restoreTree(const string& treeHash, const string& basePath = "");
-void writeIndexFile();  // ✨ NEW: Declare new function
+void writeIndexFile();
 
 #endif

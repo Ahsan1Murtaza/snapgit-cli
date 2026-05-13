@@ -14,12 +14,12 @@ file(GLOB_RECURSE SNAPGIT_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core/objects/*.cpp"
 )
 
-add_executable(mygit
+add_executable(snapgit
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cli/main.cpp"
     ${SNAPGIT_SOURCES}
 )
 
-target_include_directories(mygit PRIVATE
+target_include_directories(snapgit PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cli"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cli/commands"
@@ -27,7 +27,7 @@ target_include_directories(mygit PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core/objects"
 )
 
-target_link_libraries(mygit PRIVATE
+target_link_libraries(snapgit PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
 )

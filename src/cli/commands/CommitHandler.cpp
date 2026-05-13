@@ -49,7 +49,7 @@ void CommitHandler::handleCommit(const string &message)
     }
 
     Tree tree;
-    tree.buildFromIndex(".mygit/index");
+    tree.buildFromIndex(".snapgit/index");
     // tree.showTreeElements();
 
     tree.save();
@@ -64,7 +64,7 @@ void CommitHandler::handleCommit(const string &message)
     }
 
     // Parent #2 (if merge): MERGE_HEAD
-    string mergeHeadFile = ".mygit/MERGE_HEAD";
+    string mergeHeadFile = ".snapgit/MERGE_HEAD";
     if (filesystem::exists(mergeHeadFile)) {
        ifstream mh(mergeHeadFile);
        string mergeParent;

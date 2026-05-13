@@ -37,10 +37,10 @@ static string readFile(const string &path) {
  */
 static string getObjectPath(const string &hash) {
     if (hash.size() >= 3) {
-        string p = ".mygit/objects/" + hash.substr(0,2) + "/" + hash.substr(2);
+        string p = ".snapgit/objects/" + hash.substr(0,2) + "/" + hash.substr(2);
         if (fs::exists(p)) return p;
     }
-    string flat = ".mygit/objects/" + hash;
+    string flat = ".snapgit/objects/" + hash;
     return flat;
 }
 

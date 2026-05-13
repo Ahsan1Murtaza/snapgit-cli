@@ -18,7 +18,7 @@ using namespace std;
 CommitData readCommit(const string& commitHash) {
     CommitData data;
     
-    string folder = ".mygit/objects/" + commitHash.substr(0, 2);
+    string folder = ".snapgit/objects/" + commitHash.substr(0, 2);
     string file = folder + "/" + commitHash.substr(2);
     
     ifstream in(file);

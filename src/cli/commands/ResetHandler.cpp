@@ -18,7 +18,7 @@ namespace fs = std::filesystem;
 
 ResetHandler::ResetHandler() {}
 
-// Helper function to clear working directory except .mygit
+// Helper function to clear working directory except .snapgit
 /**
  * @brief Performs clear working directory for reset.
  */
@@ -26,7 +26,7 @@ void clearWorkingDirectoryForReset() {
     for (const auto& entry : fs::directory_iterator(".")) {
         string name = entry.path().filename().string();
         
-        if (name == ".mygit") {
+        if (name == ".snapgit") {
             continue;
         }
         
@@ -52,12 +52,12 @@ void clearWorkingDirectoryForReset() {
 void ResetHandler::handleReset(const string& targetCommit, bool hard) {
     // Check if repo exists
     if (!isRepoInitialized()) {
-        cerr << "Error: Repository not initialized. Run 'mygit init' first.\n";
+        cerr << "Error: Repository not initialized. Run 'snapgit init' first.\n";
         return;
     }
     
     // Validate commit exists
-    string folder = ".mygit/objects/" + targetCommit.substr(0, 2);
+    string folder = ".snapgit/objects/" + targetCommit.substr(0, 2);
     string file = folder + "/" + targetCommit.substr(2);
     
     if (!fs::exists(file)) {
@@ -95,7 +95,7 @@ void ResetHandler::handleReset(const string& targetCommit, bool hard) {
     }
     
     // Update branch ref to target commit
-    string branchPath = ".mygit/" + currentBranch;
+    string branchPath = ".snapgit/" + currentBranch;
     ofstream branchFile(branchPath, ios::trunc);
     branchFile << targetCommit;
     branchFile.close();

@@ -145,8 +145,8 @@ void Tree::save() {
 
     hash = sha1(treeContent);
 
-    // save to .mygit/objects/
-    string folder = ".mygit/objects/" + hash.substr(0, 2);
+    // save to .snapgit/objects/
+    string folder = ".snapgit/objects/" + hash.substr(0, 2);
     string file = folder + "/" + hash.substr(2);
     
     fs::create_directories(folder);

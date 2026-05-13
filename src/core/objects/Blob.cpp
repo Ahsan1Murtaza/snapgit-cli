@@ -48,7 +48,7 @@ Blob::Blob(const string& filePath) : Object("blob"), filePath(filePath) {
  */
 void Blob::save() {
     // Save the blob data to a file
-    string dir = ".mygit/objects/" + hash.substr(0, 2);
+    string dir = ".snapgit/objects/" + hash.substr(0, 2);
     string file = dir + "/" + hash.substr(2);
 
     filesystem::create_directories(dir); // Create directory if it doesn't exist

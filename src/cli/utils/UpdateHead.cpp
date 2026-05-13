@@ -21,7 +21,7 @@ void updateHead(const string& newHash) {
 
     if (!refFile.empty()) {
         // HEAD is attached to a branch -> Update that branch's file
-        string path = ".mygit/" + refFile;
+        string path = ".snapgit/" + refFile;
         std::ofstream out(path, std::ios::trunc);
         if (!out.is_open()) {
             cerr << "Error : Could not open " << path << " for writing" << endl;
@@ -31,10 +31,10 @@ void updateHead(const string& newHash) {
         out.close();
     }
     else {
-        // Detached HEAD -> Write commit hash directly into .mygit/HEAD
-        ofstream out(".mygit/HEAD", ios::trunc);
+        // Detached HEAD -> Write commit hash directly into .snapgit/HEAD
+        ofstream out(".snapgit/HEAD", ios::trunc);
         if (!out.is_open()) {
-            cerr << "Error : Could not open .mygit/HEAD for writing" << endl;
+            cerr << "Error : Could not open .snapgit/HEAD for writing" << endl;
             return;
         }
         out << newHash;

@@ -81,8 +81,8 @@ static string findCommonAncestorSimple(const string &a, const string &b) {
  * @param otherBranchName Input value for `otherBranchName`.
  */
 static void writeConflictMarkers(const string& path, const string& currentHash, const string& otherHash, const string& otherBranchName) {
-    string curBlob = ".mygit/objects/" + currentHash.substr(0,2) + "/" + currentHash.substr(2);
-    string othBlob = ".mygit/objects/" + otherHash.substr(0,2) + "/" + otherHash.substr(2);
+    string curBlob = ".snapgit/objects/" + currentHash.substr(0,2) + "/" + currentHash.substr(2);
+    string othBlob = ".snapgit/objects/" + otherHash.substr(0,2) + "/" + otherHash.substr(2);
 
     string curContent, othContent;
     {
@@ -127,9 +127,9 @@ static void writeConflictMarkers(const string& path, const string& currentHash, 
  */
 static void updateIndexFromTree(const string& treeHash) {
     auto files = readTreeFiles(treeHash);
-    ofstream idx(".mygit/index", ios::trunc);
+    ofstream idx(".snapgit/index", ios::trunc);
     if (!idx.is_open()) {
-        cerr << "Error: Unable to open .mygit/index for writing\n";
+        cerr << "Error: Unable to open .snapgit/index for writing\n";
         return;
     }
     for (auto &p : files) {
@@ -160,7 +160,7 @@ void MergeHandler::handleMerge(const string& otherBranch) {
     }
 
     // load other branch's head
-    string branchRefPath = ".mygit/refs/heads/" + otherBranch;
+    string branchRefPath = ".snapgit/refs/heads/" + otherBranch;
     if (!fs::exists(branchRefPath)) {
         cerr << "Error: Branch '" << otherBranch << "' not found\n";
         return;
@@ -263,19 +263,19 @@ void MergeHandler::handleMerge(const string& otherBranch) {
 
     // If conflicts found, create MERGE_HEAD and exit (user must fix + add + commit)
     if (hasConflict) {
-        ofstream mergeHead(".mygit/MERGE_HEAD", ios::trunc);
+        ofstream mergeHead(".snapgit/MERGE_HEAD", ios::trunc);
         if (mergeHead.is_open()) {
             mergeHead << otherHead << "\n";
             mergeHead.close();
         } else {
-            cerr << "Error: cannot write .mygit/MERGE_HEAD\n";
+            cerr << "Error: cannot write .snapgit/MERGE_HEAD\n";
         }
-        cerr << "Automatic merge stopped due to conflicts. Resolve them, 'mygit add' the files and commit.\n";
+        cerr << "Automatic merge stopped due to conflicts. Resolve them, 'snapgit add' the files and commit.\n";
         return;
     }
 
     // No conflicts -> build a temp index-style file, then build tree via your existing Tree builder
-    const string tmpIndex = ".mygit/temp_merge_index";
+    const string tmpIndex = ".snapgit/temp_merge_index";
     {
         ofstream tmp(tmpIndex, ios::trunc);
         if (!tmp.is_open()) {
@@ -314,7 +314,7 @@ void MergeHandler::handleMerge(const string& otherBranch) {
     try { fs::remove(tmpIndex); } catch(...) {}
 
     // remove MERGE_HEAD if present (clean state)
-    try { fs::remove(".mygit/MERGE_HEAD"); } catch(...) {}
+    try { fs::remove(".snapgit/MERGE_HEAD"); } catch(...) {}
 
     cout << "Merge successful: merged branch '" << otherBranch << "' into current branch.\n";
     cout << "Created merge commit " << mergeHash << "\n";

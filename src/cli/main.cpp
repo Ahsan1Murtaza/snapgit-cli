@@ -44,7 +44,7 @@ void printHelp() {
     cout << "  restore     Restore a file from the index to the working directory\n";
     cout << "  merge       Merge branches\n";
     cout << "  help        Show this help message\n\n";
-    cout << "Use \"mygit <command> --help\" for more information on a specific command.\n";
+    cout << "Use \"snapgit <command> --help\" for more information on a specific command.\n";
 }
 
 /**
@@ -67,80 +67,80 @@ void printCommandHelp(const std::string& command) {
 
     if (command == "init") {
         title("Initialize a new repository");
-        cmd("mygit init");
-        text("Creates a .mygit directory and sets up repository structure.");
+        cmd("snapgit init");
+        text("Creates a .snapgit directory and sets up repository structure.");
     }
     else if (command == "add") {
         title("Add files to staging area");
-        cmd("mygit add <file>");
-        cmd("mygit add .");
+        cmd("snapgit add <file>");
+        cmd("snapgit add .");
         text("Adds specified file or all files recursively to the index.");
-        text("Reads ignore rules from .mygitignore when staging recursively.");
-        text("Example: mygit add file.txt");
+        text("Reads ignore rules from .snapgitignore when staging recursively.");
+        text("Example: snapgit add file.txt");
     }
     else if (command == "commit") {
         title("Commit staged changes");
-        cmd("mygit commit -m <message>");
+        cmd("snapgit commit -m <message>");
         text("Creates a new commit with the current staged files.");
-        text("Example: mygit commit -m \"Initial commit\"");
+        text("Example: snapgit commit -m \"Initial commit\"");
     }
     else if (command == "config") {
         title("Set or view SnapGit config");
-        cmd("mygit config user.name <name>");
-        cmd("mygit config user.email <email>");
+        cmd("snapgit config user.name <name>");
+        cmd("snapgit config user.email <email>");
         text("Without arguments, prints current configuration.");
     }
     else if (command == "branch") {
         title("Create or list branches");
-        cmd("mygit branch");
+        cmd("snapgit branch");
         text("Lists all branches.");
-        cmd("mygit branch <name>");
+        cmd("snapgit branch <name>");
         text("Creates a branch with the given name.");
     }
     else if (command == "checkout") {
         title("Switch branches or restore files");
-        cmd("mygit checkout <branch>");
-        cmd("mygit checkout <commit-hash>");
+        cmd("snapgit checkout <branch>");
+        cmd("snapgit checkout <commit-hash>");
         text("Updates working directory to match target.");
     }
     else if (command == "reset") {
         title("Reset current branch");
-        cmd("mygit reset --hard <commit>");
+        cmd("snapgit reset --hard <commit>");
         text("Moves branch pointer to a specific commit.");
         text("WARNING: --hard removes working directory changes.");
     }
     else if (command == "log") {
         title("Show commit history");
-        cmd("mygit log");
+        cmd("snapgit log");
         text("Displays commits from newest to oldest.");
     }
     else if (command == "status") {
         title("Show repository status");
-        cmd("mygit status");
+        cmd("snapgit status");
         text("Shows staged, modified, deleted, and untracked files.");
     }
     else if (command == "rm") {
         title("Remove files");
-        cmd("mygit rm <file>");
+        cmd("snapgit rm <file>");
         text("Removes file from working directory AND staging area.");
-        cmd("mygit rm --cached <file>");
+        cmd("snapgit rm --cached <file>");
         text("Removes file ONLY from staging area.");
     }
     else if (command == "restore") {
         title("Restore working directory files");
-        cmd("mygit restore <file>");
+        cmd("snapgit restore <file>");
         text("Restores file from staging/index to working directory.");
     }
     else if (command == "merge") {
         title("Merge branches");
-        cmd("mygit merge <otherBranch>");
+        cmd("snapgit merge <otherBranch>");
         text("Merges specified branch into current branch.");
     }
     else if (command == "help") {
         title("Help command");
-        cmd("mygit help");
+        cmd("snapgit help");
         text("Shows list of available commands.");
-        cmd("mygit help <command>");
+        cmd("snapgit help <command>");
         text("Shows detailed help for the given command.");
     }
     else {
@@ -175,13 +175,13 @@ int main(int argc, char* argv[]) {
 
      string command = argv[1]; // Get the command from command line arguments
 
-    // GLOBAL help: `mygit help`
+    // GLOBAL help: `snapgit help`
     if (command == "help") {
         printHelp();
         return 0;
     }
 
-    // Per-command help: `mygit <cmd> --help`
+    // Per-command help: `snapgit <cmd> --help`
     if (argc >= 3 && string(argv[2]) == "--help") {
         printCommandHelp(command);
         return 0;
@@ -224,7 +224,7 @@ int main(int argc, char* argv[]) {
         if (argc == 2) {
             // Display current info
             if (name.empty() && email.empty()) {
-                cout << "No user info set. \n Use:\n mygit config user.name <name>\n mygit config user.email <email>";
+                cout << "No user info set. \n Use:\n snapgit config user.name <name>\n snapgit config user.email <email>";
             } else {
                 cout << "User Information:\n";
                 cout << "  Name : " << name << "\n";
@@ -244,8 +244,8 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         cout << "Usage:\n";
-        cout << "  mygit config user.name <name> \n";
-        cout << "  mygit config user.email <email> \n";
+        cout << "  snapgit config user.name <name> \n";
+        cout << "  snapgit config user.email <email> \n";
     }
     else if (command == "branch") {
         if (argc == 2) {
@@ -254,15 +254,15 @@ int main(int argc, char* argv[]) {
             branchHandler.handleBranch(argv[2]);  
         } else {
             cout << "Usage:\n";
-            cout << "  mygit branch             # List branches\n";
-            cout << "  mygit branch <name>      # Create a new branch\n";
+            cout << "  snapgit branch             # List branches\n";
+            cout << "  snapgit branch <name>      # Create a new branch\n";
         }
     }
     else if (command == "checkout") {
         if (argc < 3) {
             cout << "Usage:\n";
-            cout << "  mygit checkout <branch-name>\n";
-            cout << "  mygit checkout <hash-code>\n";
+            cout << "  snapgit checkout <branch-name>\n";
+            cout << "  snapgit checkout <hash-code>\n";
             return 1;
         }
         
@@ -282,7 +282,7 @@ int main(int argc, char* argv[]) {
     else if (command == "reset") {
         if (argc < 3) {
             cout << "Usage:\n";
-            cout << "  mygit reset --hard <commit-hash>\n";
+            cout << "  snapgit reset --hard <commit-hash>\n";
             return 1;
         }
         
@@ -299,7 +299,7 @@ int main(int argc, char* argv[]) {
         }
         else {
             cerr << "Error: Only '--hard' reset is supported for now.\n";
-            cout << "Usage: mygit reset --hard <commit-hash>\n";
+            cout << "Usage: snapgit reset --hard <commit-hash>\n";
             return 1;
         }
         
@@ -320,7 +320,7 @@ int main(int argc, char* argv[]) {
 
     else if (command == "rm") {
         if (argc < 3) {
-           cerr << "Usage: mygit rm [--cached] <file>\n";
+           cerr << "Usage: snapgit rm [--cached] <file>\n";
            return 1;
         }
 
@@ -340,7 +340,7 @@ int main(int argc, char* argv[]) {
 
     else if (command == "merge") {
         if (argc < 3) {
-            cerr << "Usage: mygit merge <otherBranch>\n";
+            cerr << "Usage: snapgit merge <otherBranch>\n";
             return 1;
         }
         string otherBranch = argv[2];

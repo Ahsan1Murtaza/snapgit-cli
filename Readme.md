@@ -2,7 +2,7 @@
 
 SnapGit is a compact, readable implementation of a version-control system written in **C++**.
 
-It recreates core Git concepts—**objects, commits, branches, merges, index, and HEAD**—while storing everything in a plain-text `.mygit` folder so learners can inspect and understand how version control works internally.
+It recreates core Git concepts—**objects, commits, branches, merges, index, and HEAD**—while storing everything in a plain-text `.snapgit` folder so learners can inspect and understand how version control works internally.
 
 Unlike real Git, which stores compressed object files that require commands like `git cat-file` to inspect, SnapGit stores all repository objects as plain text. This allows learners to directly open and trace commits, trees, and blobs without decompression, making Git internals easier to understand.
 
@@ -29,10 +29,10 @@ SnapGit helps you **see those internals directly**.
 
 After every command, you can inspect:
 
-- `.mygit/index`
-- `.mygit/objects/<hash>`
-- `.mygit/refs/heads/<branch>`
-- `.mygit/HEAD`
+- `.snapgit/index`
+- `.snapgit/objects/<hash>`
+- `.snapgit/refs/heads/<branch>`
+- `.snapgit/HEAD`
 
 Everything is stored as **readable plain text**, making Git concepts easier to understand.
 
@@ -63,7 +63,7 @@ Everything is stored as **readable plain text**, making Git concepts easier to u
 All repository data is stored in:
 
 ```bash
-.mygit/
+.snapgit/
 ```
 
 with readable contents for exploration.
@@ -75,9 +75,9 @@ with readable contents for exploration.
 Inspect files directly:
 
 ```bash
-cat .mygit/HEAD
-cat .mygit/index
-cat .mygit/refs/heads/main
+cat .snapgit/HEAD
+cat .snapgit/index
+cat .snapgit/refs/heads/main
 ```
 
 ---
@@ -156,24 +156,24 @@ cmake --build build
 ### Linux/macOS
 
 ```bash
-./build/mygit init
+./build/snapgit init
 ```
 
 
 # Example Usage
 
 ```bash
-./build/mygit init
+./build/snapgit init
 
 echo "hello" > file.txt
 
-./build/mygit add file.txt
+./build/snapgit add file.txt
 
-./build/mygit commit -m "first commit"
+./build/snapgit commit -m "first commit"
 
-./build/mygit status
+./build/snapgit status
 
-./build/mygit log
+./build/snapgit log
 ```
 
 ---
@@ -183,7 +183,7 @@ echo "hello" > file.txt
 ## HEAD Pointer
 
 ```bash
-cat .mygit/HEAD
+cat .snapgit/HEAD
 ```
 
 Shows current branch reference.
@@ -193,7 +193,7 @@ Shows current branch reference.
 ## Branch References
 
 ```bash
-cat .mygit/refs/heads/main
+cat .snapgit/refs/heads/main
 ```
 
 Shows current commit hash.
@@ -203,7 +203,7 @@ Shows current commit hash.
 ## Staging Index
 
 ```bash
-cat .mygit/index
+cat .snapgit/index
 ```
 
 Shows staged files.
@@ -213,8 +213,8 @@ Shows staged files.
 ## Object Files
 
 ```bash
-ls .mygit/objects/
-cat .mygit/objects/<hash>
+ls .snapgit/objects/
+cat .snapgit/objects/<hash>
 ```
 
 Displays blobs, trees, and commit objects.
@@ -268,17 +268,17 @@ A future optional mode may explain what changed after every command.
 Example:
 
 ```bash
-./mygit commit -m "test" --learn
+./snapgit commit -m "test" --learn
 ```
 
 Output:
 
 ```text
 Commit object created:
-.mygit/objects/abc123
+.snapgit/objects/abc123
 
 Branch pointer updated:
-.mygit/refs/heads/main
+.snapgit/refs/heads/main
 
 HEAD still points to:
 refs/heads/main
@@ -316,7 +316,7 @@ SnapGit is built to help developers answer:
 
 > **What actually happens when I run Git commands?**
 
-By reading code and inspecting `.mygit`, learners can understand:
+By reading code and inspecting `.snapgit`, learners can understand:
 
 - snapshots  
 - commit graphs  

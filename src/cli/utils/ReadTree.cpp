@@ -22,10 +22,10 @@ unordered_map<string, string> readTreeFiles(const string& treeHash, const string
     unordered_map<string, string> result;
     if (treeHash.empty()) return result;
 
-    string objectPath = ".mygit/objects/" + treeHash.substr(0, 2) + "/" + treeHash.substr(2);
+    string objectPath = ".snapgit/objects/" + treeHash.substr(0, 2) + "/" + treeHash.substr(2);
     if (!fs::exists(objectPath)) {
         // maybe flat object stored without split
-        objectPath = ".mygit/objects/" + treeHash;
+        objectPath = ".snapgit/objects/" + treeHash;
         if (!fs::exists(objectPath)) return result;
     }
 

@@ -23,11 +23,11 @@ void ConfigHandler::handleConfig(const string& name, const string& email) {
     
 
     if (!isRepoInitialized()) {
-        cerr << "Error: Repository not initialized. Run 'mygit init' first.\n";
+        cerr << "Error: Repository not initialized. Run 'snapgit init' first.\n";
         return;
     }
     
-    string configPath = ".mygit/config";
+    string configPath = ".snapgit/config";
     ofstream configFile(configPath);
     if (!configFile) {
         cerr << "Error: Could not open config file for writing.\n";

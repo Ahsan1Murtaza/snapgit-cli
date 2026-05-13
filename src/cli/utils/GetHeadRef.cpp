@@ -17,10 +17,10 @@ using namespace std;
  * @return Requested string value.
  */
 string getHeadRef() {
-    ifstream headFile(".mygit/HEAD");
+    ifstream headFile(".snapgit/HEAD");
 
     if (!headFile.is_open()) {
-        cerr << "Error: .mygit/HEAD file not found" << endl;
+        cerr << "Error: .snapgit/HEAD file not found" << endl;
         return "";
     }
 

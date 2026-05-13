@@ -38,7 +38,7 @@ string getCurrentCommitHash() {
 
     // Normal branch mode: HEAD points to refs/heads/<branch>
     if (!currentBranchFile.empty()) {
-        string path = ".mygit/" + currentBranchFile;
+        string path = ".snapgit/" + currentBranchFile;
         ifstream in(path);
         if (!in.is_open()) {
             return "";
@@ -49,7 +49,7 @@ string getCurrentCommitHash() {
     }
 
     // Detached HEAD mode: HEAD stores commit hash directly
-    ifstream headFile(".mygit/HEAD");
+    ifstream headFile(".snapgit/HEAD");
     if (!headFile.is_open()) {
         return "";
     }
