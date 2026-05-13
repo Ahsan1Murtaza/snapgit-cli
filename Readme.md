@@ -1,130 +1,336 @@
 # SnapGit — A Transparent Mini Git (C++)
 
-SnapGit is a compact, readable implementation of a version-control system written in C++. It recreates core Git concepts (objects, commits, branches, merges, index, HEAD) while storing everything in a plain-text `.mygit` folder so learners can inspect and understand the internals.
+SnapGit is a compact, readable implementation of a version-control system written in **C++**.
 
-**Purpose:** teach and demystify how Git-like systems work by exposing repository internals and providing a small, approachable codebase for contributors.
+It recreates core Git concepts—**objects, commits, branches, merges, index, and HEAD**—while storing everything in a plain-text `.mygit` folder so learners can inspect and understand how version control works internally.
 
-**Not a replacement for Git:** SnapGit is intended as an educational reference and learning tool, not as a full drop-in substitute for `git`.
+Unlike real Git, which stores compressed object files that require commands like `git cat-file` to inspect, SnapGit stores all repository objects as plain text. This allows learners to directly open and trace commits, trees, and blobs without decompression, making Git internals easier to understand.
 
-**Project Website (optional):** https://snapgit.lovable.app
+**Purpose:** Teach and demystify Git internals through a small, approachable codebase.
 
----
+**Not a replacement for Git:** SnapGit is an educational project
 
-**Commenting Standard (Doxygen + SPDX)**
-- **File header (required for every `*.h` and `*.cpp`):**
-  - First line must be: `// SPDX-License-Identifier: MIT`
-  - Follow with a short file-purpose comment.
-- **Function comment (required):**
-  - Use Doxygen block comments (`/** ... */`) above each function declaration cmake -S . -B build
-cmake --build buildin headers.
-  - For internal/helper functions defined only in `.cpp`, add Doxygen block above the definition.
-- **Required Doxygen tags:**
-  - `@brief` for all functions.
-  - `@param` for every parameter.
-  - `@return` for non-`void` functions.
-- **Optional Doxygen tags:**
-  - `@note` for side effects, assumptions, edge cases, or behavior worth calling out.
-- **Quality rule:**
-  - Comments should explain intent/behavior, not restate obvious syntax.
+🌐 **Project Website:** https://snapgit.lovable.app
 
 ---
 
-**Scope & Audience**
-- **Scope:** core VCS primitives — `init`, `add`, `commit`, `branch`, `checkout`, `merge`, `status`, `log`, `reset`, `restore`. Uses a simple object store and plain-text index to show how snapshots and references are managed.
-- **Audience:** beginners and developers who want to understand what commits, snapshots, branches, merges, and conflicts actually do behind the scenes. Perfect for learners who run Git commands today without understanding their effects.
+# Why SnapGit?
+
+Most developers use Git daily without fully understanding what happens behind commands like:
+
+```bash
+git add
+git commit
+git checkout
+git merge
+```
+
+SnapGit helps you **see those internals directly**.
+
+After every command, you can inspect:
+
+- `.mygit/index`
+- `.mygit/objects/<hash>`
+- `.mygit/refs/heads/<branch>`
+- `.mygit/HEAD`
+
+Everything is stored as **readable plain text**, making Git concepts easier to understand.
 
 ---
 
-**How SnapGit Helps Learners**
-- Everything is saved in a `.mygit` directory in readable formats. Inspecting those files shows how snapshots, trees, commits, and refs are represented.
-- The codebase is intentionally structured so each command lives in `CommandHandlers/` and helpers live in `Helper/`, making it easy to read and extend.
+# Features
 
-**Learning Mode (planned / contribution idea)**
-- A learning feature can be implemented to optionally explain what happened after every command by printing pointers to files under `.mygit` (for example: "See `.mygit/refs/heads/main` for the branch pointer", "See `.mygit/objects/<hash>` for the commit object").
-- This feature is not fully implemented yet — see `CONTRIBUTING.md` for suggested implementation and how to contribute it.
+## Core Git-like Commands
+
+- `init` — Initialize a SnapGit repository  
+- `add` — Stage files into the index  
+- `commit` — Create commits and snapshots  
+- `branch` — Create and list branches  
+- `checkout` — Switch branches or restore commits  
+- `merge` — Merge branches and handle conflicts  
+- `status` — Show repository state  
+- `log` — View commit history  
+- `reset` — Move branch pointers  
+- `restore` — Restore files  
+- `rm` — Remove tracked files  
 
 ---
 
-**Quick Start (build & run with CMake)**
-- **Ubuntu/Debian prerequisite:** install OpenSSL development headers first:
+## Learning-Friendly Design
+
+### Transparent Object Store
+
+All repository data is stored in:
+
+```bash
+.mygit/
+```
+
+with readable contents for exploration.
+
+---
+
+### Plain-Text Internals
+
+Inspect files directly:
+
+```bash
+cat .mygit/HEAD
+cat .mygit/index
+cat .mygit/refs/heads/main
+```
+
+---
+
+### Modular Codebase
+
+Commands and internals are organized cleanly for contributors.
+
+---
+
+# Project Structure
+
+```text
+SnapGit/
+├── CMakeLists.txt
+├── LICENSE
+├── Readme.md
+├── src/
+│   ├── cli/
+│   │   ├── main.cpp
+│   │   ├── commands/
+│   │   │   ├── AddHandler.cpp
+│   │   │   ├── CommitHandler.cpp
+│   │   │   ├── BranchHandler.cpp
+│   │   │   ├── CheckoutHandler.cpp
+│   │   │   ├── MergeHandler.cpp
+│   │   │   ├── StatusHandler.cpp
+│   │   │   ├── LogHandler.cpp
+│   │   │   ├── ResetHandler.cpp
+│   │   │   └── RestoreHandler.cpp
+│   │   └── utils/
+│   │       ├── Hash.cpp
+│   │       ├── ReadIndex.cpp
+│   │       ├── ReadTree.cpp
+│   │       ├── UpdateHead.cpp
+│   │       └── ...
+│   └── core/
+│       └── objects/
+│           ├── Blob.cpp
+│           ├── Tree.cpp
+│           └── Commit.cpp
+└── build/
+```
+
+---
+
+# Build Instructions
+
+## Prerequisites
+
+### Ubuntu / Debian
+
+Install OpenSSL headers:
 
 ```bash
 sudo apt update
 sudo apt install -y libssl-dev
 ```
 
-- **Configure and build (Linux/macOS/Windows with CMake):**
+---
+
+## Build with CMake
 
 ```bash
-cd <path-to-repo>
+git clone <repo-url>
+cd SnapGit
+
 cmake -S . -B build
 cmake --build build
 ```
 
-- **Run the CLI after build:**
-  - Linux/macOS: `./build/mygit init`
-  - Windows (Visual Studio generator): `.\build\Debug\mygit.exe init`
+---
 
-- **Optional legacy build script:** `build.bat` is still available for Windows users, but CMake is the recommended cross-platform path.
+# Running SnapGit
 
-After building, run the CLI commands, for example:
+### Linux/macOS
 
 ```bash
 ./build/mygit init
+```
+
+
+# Example Usage
+
+```bash
+./build/mygit init
+
+echo "hello" > file.txt
+
 ./build/mygit add file.txt
+
 ./build/mygit commit -m "first commit"
+
 ./build/mygit status
+
+./build/mygit log
 ```
 
 ---
 
-**Commands (high level)**
-- **`init`**: create `.mygit` folder and initial metadata.
-- **`add`**: stage files into index.
-  - Supports `mygit add .` to stage recursively.
-  - Honors ignore rules from `.mygitignore` during recursive staging.
-- **`commit`**: create commit object and update refs.
-- **`branch`**: create/list branches under `.mygit/refs/heads`.
-- **`checkout`**: switch branch or restore tree from commit.
-- **`merge`**: attempt to combine branches, write conflict markers when needed.
-- **`status`, `log`, `reset`, `restore`, `rm`**: utility commands mirroring common git behaviors.
+# Inspecting Internals
+
+## HEAD Pointer
+
+```bash
+cat .mygit/HEAD
+```
+
+Shows current branch reference.
 
 ---
 
-**Project Layout**
-- **`main.cpp`**: CLI entrypoint, argument parsing, dispatching to handlers.
-- **`CommandHandlers/`**: each command lives in its own folder (`AddHandler/`, `CommitHandler/`, etc.). Look here to add or modify commands.
-- **`Helper/`**: helper utilities for hashing, reading/writing index, updating HEAD, etc.
-- **`Objects/`**: implementations for `Blob`, `Tree`, `Commit` objects used by the object store.
-- **`CMakeLists.txt`**: cross-platform build configuration (recommended).
-- **`build.bat`**: legacy Windows build helper (optional).
-- **`runInstructions.txt`**: quick compile/run hints.
+## Branch References
+
+```bash
+cat .mygit/refs/heads/main
+```
+
+Shows current commit hash.
 
 ---
 
-**Inspecting the Repository Internals**
-- **`.mygit/objects/<hash>`**: object files (blobs, trees, commits) — open as plain text to inspect contents.
-- **`.mygit/index`**: staging area representation.
-- **`.mygit/refs/heads/<branch>`**: branch pointers (commit hashes).
-- **`.mygit/HEAD`**: reference to the current branch or commit.
+## Staging Index
 
-Exploring these files after commands shows exactly what changed — that is the learning value of SnapGit.
+```bash
+cat .mygit/index
+```
 
----
-
-**Learning Mode & Current Status**
-- **Current behavior:** SnapGit prints human-friendly messages similar to `git` for successful commands and errors. The codebase does not yet include a fully implemented interactive learning mode.
-- **Planned / suggested learning mode:** a command-line flag (for example `--learn` or subcommand `learn on`) that, when enabled, prints after each command a concise explanation and points to specific files inside `.mygit` that demonstrate what changed (e.g., "A new commit object was written to `.mygit/objects/<hash>` — open it to see the tree and message").
-- **How contributors can help:** see `CONTRIBUTING.md` for step-by-step guidance and a suggested API hook location where commands can call a `LearningHelper::Explain(command, context)` routine.
+Shows staged files.
 
 ---
 
-**Where to Start if You Want to Contribute**
-- Read `CONTRIBUTING.md` for development setup and a contribution checklist.
-- Explore `CommandHandlers/` and add tests or small enhancements (e.g., better messages, more test coverage).
-- Implement the Learning Mode by adding a small library under `Helper/` and invoking it from command dispatch in `main.cpp`.
+## Object Files
+
+```bash
+ls .mygit/objects/
+cat .mygit/objects/<hash>
+```
+
+Displays blobs, trees, and commit objects.
 
 ---
 
+# Commenting Standard (Doxygen + SPDX)
 
-Thank you for building something that helps people learn how version control works!
+## File Header
+
+Every `.cpp` and `.h` file begins with:
+
+```cpp
+// SPDX-License-Identifier: MIT
+```
+
+Followed by a short file-purpose comment.
+
+---
+
+## Function Documentation
+
+Use Doxygen comments:
+
+```cpp
+/**
+ * @brief Creates a new commit object.
+ * @param message Commit message.
+ * @return Commit hash.
+ */
+```
+
+### Required Tags
+
+- `@brief`
+- `@param`
+- `@return` (if non-void)
+
+### Optional Tags
+
+- `@note`
+
+Comments should explain **intent and behavior**, not obvious syntax.
+
+---
+
+# Learning Mode (Planned)
+
+A future optional mode may explain what changed after every command.
+
+Example:
+
+```bash
+./mygit commit -m "test" --learn
+```
+
+Output:
+
+```text
+Commit object created:
+.mygit/objects/abc123
+
+Branch pointer updated:
+.mygit/refs/heads/main
+
+HEAD still points to:
+refs/heads/main
+```
+
+This would help users connect commands to repository internals.
+
+---
+
+# Contributing
+
+Contributions are welcome.
+
+Good beginner contributions:
+
+- Improve command behavior
+- Add tests
+- Improve error messages
+- Implement Learning Mode
+- Improve documentation
+
+Start by exploring:
+
+```text
+src/cli/commands/
+src/cli/utils/
+src/core/objects/
+```
+
+---
+
+# Educational Goal
+
+SnapGit is built to help developers answer:
+
+> **What actually happens when I run Git commands?**
+
+By reading code and inspecting `.mygit`, learners can understand:
+
+- snapshots  
+- commit graphs  
+- branch pointers  
+- merges  
+- conflict markers  
+- repository state transitions  
+
+---
+
+# License
+
+MIT License
+
+---
+
+**Thank you for building tools that help people understand version control.**
