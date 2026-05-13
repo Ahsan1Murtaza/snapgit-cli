@@ -9,24 +9,25 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(OpenSSL REQUIRED)
 
 file(GLOB_RECURSE SNAPGIT_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/CommandHandlers/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Helper/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Objects/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cli/commands/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cli/utils/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/core/objects/*.cpp"
 )
 
-add_executable(mygit
-    "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
+add_executable(snapgit
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cli/main.cpp"
     ${SNAPGIT_SOURCES}
 )
 
-target_include_directories(mygit PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/CommandHandlers"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Helper"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Objects"
+target_include_directories(snapgit PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cli"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cli/commands"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cli/utils"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/core/objects"
 )
 
-target_link_libraries(mygit PRIVATE
+target_link_libraries(snapgit PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
 )

@@ -1,0 +1,225 @@
+// SPDX-License-Identifier: MIT
+// Implementation for StatusHandler.
+
+#include "StatusHandler.h"
+
+#include "../utils/Hash.h"
+#include "../utils/ReadCommit.h"
+#include "../utils/GetCurrentCommitHash.h"
+#include "../utils/GetHeadRef.h"
+#include "../utils/ReadIndex.h"
+#include "../utils/ReadTree.h"
+#include "../utils/Ignore.h"
+#include "../utils/RepoCheck.h"
+
+
+#include <iostream>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#include <string>
+#include <filesystem>
+#include <fstream>
+#include <sstream>
+
+
+using namespace std;
+namespace fs = std::filesystem;
+
+
+// -----------------------------------------------------
+// READ WORKING DIRECTORY (ignore .snapgit)
+// -----------------------------------------------------
+/**
+ * @brief Reads working directory from repository storage.
+ * @param ignorePatterns Input value for `ignorePatterns`.
+ * @return Requested string value.
+ */
+unordered_map<string, string> readWorkingDirectory(const vector<string>& ignorePatterns) {
+    unordered_map<string, string> result;
+
+    fs::recursive_directory_iterator it("."), end;
+    while (it != end) {
+        const fs::directory_entry& entry = *it;
+        fs::path relPath = fs::relative(entry.path(), fs::current_path());
+        string rel = relPath.generic_string();
+
+        if (entry.is_directory()) {
+            if (rel == ".snapgit" || rel.rfind(".snapgit/", 0) == 0 || isIgnoredPath(rel + "/", ignorePatterns)) {
+                it.disable_recursion_pending();
+            }
+            ++it;
+            continue;
+        }
+
+        if (!entry.is_regular_file()) {
+            ++it;
+            continue;
+        }
+
+        if (rel.rfind(".snapgit/", 0) == 0 || isIgnoredPath(rel, ignorePatterns)) {
+            ++it;
+            continue;
+        }
+
+        ifstream file(entry.path(), ios::binary);
+        if (!file) {
+            ++it;
+            continue;
+        }
+
+        stringstream buffer;
+        buffer << file.rdbuf();
+        string content = buffer.str();
+
+        string blobData = "blob " + to_string(content.size()) + "\0" + content;
+        string hash = sha1(blobData);
+
+        result[rel] = hash;
+        ++it;
+    }
+
+    return result;
+}
+
+
+
+
+
+// -----------------------------------------------------
+// STATUS HANDLER
+// -----------------------------------------------------
+/**
+ * @brief Handles the  status command workflow.
+ */
+void StatusHandler::handleStatus() {
+
+    if (!isRepoInitialized()) {
+        cerr << "Error: Repository not initialized. Run 'snapgit init' first.\n";
+        return;
+    }
+
+    auto ignorePatterns = readIgnorePatterns();
+    auto work = readWorkingDirectory(ignorePatterns);
+    auto index = readIndex();
+
+    unordered_map<string, string> headFiles;
+    string headHash = getCurrentCommitHash();
+
+    if (!headHash.empty()) {
+        auto headCommit = readCommit(headHash);
+        headFiles = readTreeFiles(headCommit.treeHash);
+    }
+
+    vector<string> untracked;
+    vector<string> modifiedNotStaged;
+    vector<string> stagedNew;
+    vector<string> stagedModified;
+    vector<string> stagedDeleted;
+    vector<string> deletedNotStaged;
+
+    unordered_set<string> allPaths;
+
+    for (auto& [p, _] : headFiles)  allPaths.insert(p);
+    for (auto& [p, _] : index)      allPaths.insert(p);
+    for (auto& [p, _] : work)       allPaths.insert(p);
+
+
+    for (auto& path : allPaths) {
+        bool inHead  = headFiles.count(path);
+        bool inIndex = index.count(path);
+        bool inWork  = work.count(path);
+
+        string h = inHead  ? headFiles[path] : "";
+        string i = inIndex ? index[path]     : "";
+        string w = inWork  ? work[path]      : "";
+
+        // UNTRACKED
+        if (!inHead && !inIndex && inWork) {
+            untracked.push_back(path);
+        }
+
+        // STAGED DELETION
+        else if (inHead && !inIndex) {
+            stagedDeleted.push_back(path);
+        }
+
+
+        // MODIFIED STAGED
+        else if (inHead && inIndex && i != h) {
+            stagedModified.push_back(path);
+        }
+
+        // DELETED NOT STAGED
+        else if (inIndex && inHead && !inWork && i == h) {
+            deletedNotStaged.push_back(path);
+        }
+
+        // NEW FILE STAGED
+        else if (!inHead && inIndex) {
+            stagedNew.push_back(path);
+            if (inWork && w != i) {
+                modifiedNotStaged.push_back(path);
+            }
+        }
+
+        // MODIFIED NOT STAGED
+        else if (inIndex && inWork && i != w) {
+            modifiedNotStaged.push_back(path);
+        }
+
+        // DELETED NOT STAGED
+        else if (inIndex && !inWork) {
+            // File staged (in INDEX) but removed from working directory
+            deletedNotStaged.push_back(path);
+        }
+
+    }
+
+
+    // -----------------------------------------------------
+    // PRINT (Git style)
+    // -----------------------------------------------------
+
+    string branch = getHeadRef();
+    if (!branch.empty()) {
+        cout << "On branch " << branch.substr(branch.find_last_of('/') + 1) << "\n\n";
+    } else {
+        cout << "HEAD detached\n\n";
+    }
+
+    // Changes to be committed
+    if (!stagedNew.empty() || !stagedModified.empty() || !stagedDeleted.empty()) {
+        cout << "Changes to be committed:\n";
+        cout << "  (use \"snapgit restore <file>...\" to unstage)\n\n";
+        for (auto &p : stagedNew)      cout << "    new file: " << p << "\n";
+        for (auto &p : stagedModified) cout << "    modified: " << p << "\n";
+        for (auto &p : stagedDeleted)  cout << "    deleted: " << p << "\n";
+        cout << "\n\n";
+    }
+
+    // Changes not staged for commit
+    if (!modifiedNotStaged.empty() || !deletedNotStaged.empty()) {
+        cout << "Changes not staged for commit:\n";
+        cout << "  (use \"snapgit rm <file> or snapgit rm --cached <file>\" to update what will be committed)\n";
+        cout << "  (use \"snapgit restore <file>...\" to discard changes in working directory)\n\n";
+        for (auto &p : modifiedNotStaged) cout << "    modified: " << p << "\n";
+        for (auto &p : deletedNotStaged)  cout << "    deleted: " << p << "\n";
+        cout << "\n\n";
+    }
+
+    if (!untracked.empty()) {
+        cout << "Untracked files:\n";
+        cout << "  (use \"snapgit add <file>...\" to include in what will be committed)\n\n";
+        for (auto &p : untracked) cout << "    " << p << "\n";
+        cout << "\n\n";
+    }
+
+    // Clean working tree message
+    if (stagedNew.empty() && stagedModified.empty() && stagedDeleted.empty() &&
+        modifiedNotStaged.empty() && deletedNotStaged.empty() && untracked.empty()) {
+        cout << "nothing to commit, working tree clean\n\n";
+    } else if (untracked.size() && stagedNew.empty() && stagedModified.empty() && stagedDeleted.empty()) {
+        cout << "nothing added to commit but untracked files present (use \"git add\" to track)\n\n";
+    }
+}
