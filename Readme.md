@@ -45,14 +45,16 @@ Everything is stored as **readable plain text**, making Git concepts easier to u
 - `init` — Initialize a SnapGit repository  
 - `add` — Stage files into the index  
 - `commit` — Create commits and snapshots  
-- `branch` — Create and list branches  
+- `config` — Set or view `user.name` and `user.email`  
+- `branch` — List branches, create a branch, or delete with `-d`  
 - `checkout` — Switch branches or restore commits  
 - `merge` — Merge branches and handle conflicts  
 - `status` — Show repository state  
 - `log` — View commit history  
-- `reset` — Move branch pointers  
-- `restore` — Restore files  
-- `rm` — Remove tracked files  
+- `reset` — Move branch pointers (`--hard`)  
+- `restore` — Restore files from the index to the working tree  
+- `rm` — Remove tracked files (or `--cached` to unstage only)  
+- `gc` — Remove unreachable objects (`--dry-run` to preview)  
 
 ---
 
@@ -103,13 +105,17 @@ SnapGit/
 │   │   │   ├── CommitHandler.cpp
 │   │   │   ├── BranchHandler.cpp
 │   │   │   ├── CheckoutHandler.cpp
+│   │   │   ├── ConfigHandler.cpp
+│   │   │   ├── GcHandler.cpp
 │   │   │   ├── MergeHandler.cpp
+│   │   │   ├── RemoveHandler.cpp
 │   │   │   ├── StatusHandler.cpp
 │   │   │   ├── LogHandler.cpp
 │   │   │   ├── ResetHandler.cpp
 │   │   │   └── RestoreHandler.cpp
 │   │   └── utils/
 │   │       ├── Hash.cpp
+│   │       ├── MarkReachable.cpp
 │   │       ├── ReadIndex.cpp
 │   │       ├── ReadTree.cpp
 │   │       ├── UpdateHead.cpp
@@ -165,6 +171,9 @@ cmake --build build
 ```bash
 ./build/snapgit init
 
+./build/snapgit config user.name "Your Name"
+./build/snapgit config user.email "you@example.com"
+
 echo "hello" > file.txt
 
 ./build/snapgit add file.txt
@@ -174,6 +183,13 @@ echo "hello" > file.txt
 ./build/snapgit status
 
 ./build/snapgit log
+
+# Branching and cleanup
+./build/snapgit branch feature
+./build/snapgit checkout feature
+./build/snapgit branch -d main          # delete a branch (not the one you are on)
+./build/snapgit gc --dry-run            # preview unreachable objects
+./build/snapgit gc                      # delete unreachable objects
 ```
 
 ---
