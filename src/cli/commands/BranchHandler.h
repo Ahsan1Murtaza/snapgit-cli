@@ -4,15 +4,14 @@
 #ifndef BRANCH_HANDLER_H
 #define BRANCH_HANDLER_H
 
-#include <string>
-
 class BranchHandler {
 public:
     /**
-     * @brief Handles the  branch command workflow.
-     * @param branchName Branch name to create or inspect.
+     * @brief Handles the branch command (list, create, or delete).
+     * @param argc Argument count from main (includes program name).
+     * @param argv Argument vector from main.
      */
-    void handleBranch(const std::string &branchName = "");
+    void handleBranch(int argc, char* argv[]);
 };
 
-#endif 
+#endif
