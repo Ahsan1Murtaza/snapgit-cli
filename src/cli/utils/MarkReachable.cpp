@@ -47,7 +47,8 @@ static void markCommit(const string& commitHash, unordered_set<string>& reachabl
 
 static void markTree(const string& treeHash, unordered_set<string>& reachable) {
     if (treeHash.empty()) return;
-    if (!reachable.insert(treeHash).second) return;
+    if (reachable.count(treeHash)) return;
+    reachable.insert(treeHash);
 
     string objectPath = ".snapgit/objects/" + treeHash.substr(0, 2) + "/" + treeHash.substr(2);
     if (!fs::exists(objectPath)) {
@@ -67,9 +68,10 @@ static void markTree(const string& treeHash, unordered_set<string>& reachable) {
         hash = trim(hash);
         if (hash.empty()) continue;
 
-        reachable.insert(hash);
         if (type == "tree") {
             markTree(hash, reachable);
+        } else {
+            reachable.insert(hash);
         }
     }
 }
