@@ -17,6 +17,7 @@
 #include "commands/RestoreHandler.h"
 #include "commands/RemoveHandler.h"
 #include "commands/MergeHandler.h"
+#include "commands/GcHandler.h"
 
 #include "utils/GetUserInfo.h"
 
@@ -43,6 +44,7 @@ void printHelp() {
     cout << "  rm          Remove a file from the staging area (cached) or working directory\n";
     cout << "  restore     Restore a file from the index to the working directory\n";
     cout << "  merge       Merge branches\n";
+    cout << "  gc          Remove unreachable objects from the object store\n";
     cout << "  help        Show this help message\n\n";
     cout << "Use \"snapgit <command> --help\" for more information on a specific command.\n";
 }
@@ -91,11 +93,20 @@ void printCommandHelp(const std::string& command) {
         text("Without arguments, prints current configuration.");
     }
     else if (command == "branch") {
-        title("Create or list branches");
+        title("Create, list, or delete branches");
         cmd("snapgit branch");
         text("Lists all branches.");
         cmd("snapgit branch <name>");
         text("Creates a branch with the given name.");
+        cmd("snapgit branch -d <name>");
+        text("Deletes a branch (removes refs/heads/<name>).");
+    }
+    else if (command == "gc") {
+        title("Garbage collect unreachable objects");
+        cmd("snapgit gc");
+        text("Deletes objects not reachable from any branch, HEAD, or the index.");
+        cmd("snapgit gc --dry-run");
+        text("Shows what would be deleted without removing files.");
     }
     else if (command == "checkout") {
         title("Switch branches or restore files");
@@ -167,6 +178,7 @@ int main(int argc, char* argv[]) {
     RestoreHandler restoreHandler;
     RemoveHandler removeHandler;
     MergeHandler mergeHandler;
+    GcHandler gcHandler;
 
      if (argc < 2) {
          printHelp();
@@ -248,15 +260,22 @@ int main(int argc, char* argv[]) {
         cout << "  snapgit config user.email <email> \n";
     }
     else if (command == "branch") {
-        if (argc == 2) {
-            branchHandler.handleBranch();  
-        } else if (argc == 3) {
-            branchHandler.handleBranch(argv[2]);  
-        } else {
-            cout << "Usage:\n";
-            cout << "  snapgit branch             # List branches\n";
-            cout << "  snapgit branch <name>      # Create a new branch\n";
+        branchHandler.handleBranch(argc, argv);
+    }
+    else if (command == "gc") {
+        bool dryRun = false;
+        if (argc >= 3) {
+            string arg = argv[2];
+            if (arg == "--dry-run" || arg == "-n") {
+                dryRun = true;
+            } else {
+                cerr << "Usage:\n";
+                cerr << "  snapgit gc\n";
+                cerr << "  snapgit gc --dry-run\n";
+                return 1;
+            }
         }
+        gcHandler.handleGc(dryRun);
     }
     else if (command == "checkout") {
         if (argc < 3) {
