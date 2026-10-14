@@ -1,4 +1,4 @@
-# SnapGit — A Transparent Mini Git (C++)
+# SnapGit - A Transparent Mini Git (C++)
 
 SnapGit is a compact, readable implementation of a version-control system written in **C++**.
 
